@@ -22,6 +22,7 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     def nav_version = "2.3.0"
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
@@ -36,5 +37,7 @@ dependencies {
     //navigation component - for fragments
     implementation "androidx.navigation:navigation-fragment:$nav_version"
     implementation "androidx.navigation:navigation-ui:$nav_version"
+
+    apply plugin: "androidx.navigation.safeargs"
 
 }
