@@ -7,3 +7,4 @@
 4. User can search any item.
 5. The user can use the voice control to add a new item.
 6. The user can create categories of lists (and change their color). Every list has its own items.
+7. Every category represents a viewpager
