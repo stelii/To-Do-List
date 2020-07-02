@@ -4,11 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 
 import android.os.Bundle;
-
-import my.projects.todolist.fragments.HomePageFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,4 +16,12 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+//    private void navigateConditionally(){
+//        NavController navController = Navigation.findNavController(this,R.id.nav_host_fragment);
+//        NavGraph navGraph = navController.getNavInflater().inflate(R.navigation.nav_graph);
+//
+//        navGraph.setStartDestination(R.id.noListsFragment);
+//        navController.setGraph(navGraph);
+//    }
 }

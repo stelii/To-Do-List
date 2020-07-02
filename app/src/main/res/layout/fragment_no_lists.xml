@@ -4,9 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.HomePageFragment"
-    android:padding="24dp"
-    >
+    tools:context=".fragments.NoListsFragment"
+    android:padding="24dp">
 
     <TextView
         android:id="@+id/home_fragment_no_lists_title"
@@ -22,7 +21,11 @@
         app:layout_constraintHorizontal_bias="0.156"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+
+        />
 
     <TextView
         android:id="@+id/home_fragment_no_lists_subtitle"
@@ -35,6 +38,9 @@
         android:textSize="55sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.156"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/home_fragment_no_lists_title" />
 

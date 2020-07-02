@@ -10,16 +10,17 @@ import android.view.ViewGroup;
 
 import my.projects.todolist.R;
 
-public class HomePageFragment extends Fragment {
+public class HomeFragment extends Fragment {
 
 
-    public HomePageFragment() {
+    public HomeFragment() {
         // Required empty public constructor
     }
 
 
-    public static HomePageFragment newInstance(String param1, String param2) {
-        HomePageFragment fragment = new HomePageFragment();
+    // TODO: Rename and change types and number of parameters
+    public static HomeFragment newInstance(String param1, String param2) {
+        HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -34,6 +35,6 @@ public class HomePageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home_page, container, false);
+        return inflater.inflate(R.layout.fragment_home, container, false);
     }
 }
