@@ -18,7 +18,7 @@ public class NoListsFragment extends Fragment {
     }
 
 
-    public static NoListsFragment newInstance(String param1, String param2) {
+    public static NoListsFragment newInstance() {
         NoListsFragment fragment = new NoListsFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);

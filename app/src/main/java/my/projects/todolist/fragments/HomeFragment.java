@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,7 +35,7 @@ public class HomeFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static HomeFragment newInstance(String param1, String param2) {
+    public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -76,11 +78,11 @@ public class HomeFragment extends Fragment {
         view.findViewById(R.id.home_fragment_fab_button_add).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Task task = new Task("task " + count++);
-                mTaskViewModel.insert(task);
+                NavController navController = Navigation.findNavController(requireActivity(),R.id.nav_host_fragment);
+                navController.navigate(R.id.action_homeFragment_to_addEditFragment);
             }
         });
-
-
     }
+
+
 }
