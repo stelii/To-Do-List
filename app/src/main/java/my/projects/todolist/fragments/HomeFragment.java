@@ -10,12 +10,17 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
@@ -24,12 +29,12 @@ import my.projects.todolist.adapters.TaskAdapter;
 import my.projects.todolist.database.Task;
 import my.projects.todolist.database.TaskViewModel;
 
+import static android.content.ContentValues.TAG;
+
 public class HomeFragment extends Fragment {
     private TaskViewModel mTaskViewModel ;
     private TaskAdapter mTaskAdapter ;
     private RecyclerView mTaskList ;
-
-    public static int count = 1 ;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -82,6 +87,67 @@ public class HomeFragment extends Fragment {
                 navController.navigate(R.id.action_homeFragment_to_addEditFragment);
             }
         });
+
+        enableSwipeToDeleteAndUndo(mTaskList);
+
+    }
+
+    private void enableSwipeToDeleteAndUndo(RecyclerView recyclerView){
+        ItemTouchHelper.Callback callback = new ItemTouchHelper.Callback() {
+            @Override
+            public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                return makeMovementFlags(0,ItemTouchHelper.START | ItemTouchHelper.END);
+            }
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int pos = viewHolder.getAdapterPosition();
+                Task taskDeleted = mTaskAdapter.getItemAt(pos);
+                mTaskViewModel.delete(taskDeleted);
+//                final int position = viewHolder.getAdapterPosition();
+//                final Task taskToDelete = mTaskAdapter.getItemAt(position);
+//                mTaskAdapter.removeAndNotifyItem(position);
+//
+//                final View parentView = getView();
+////                assert parentView != null;
+////                parentView.setTag(position);
+//
+//                Snackbar.make(parentView,"This is a snackbar", BaseTransientBottomBar.LENGTH_LONG)
+//                        .addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+//                            @Override
+//                            public void onDismissed(Snackbar snackbar, int event) {
+//                                super.onDismissed(snackbar,event);
+////                                int deletedPosition = (int) parentView.getTag();
+//
+//                                switch (event){
+//                                    case Snackbar.Callback.DISMISS_EVENT_ACTION :
+//                                        Log.d(TAG, "onDismissed: " + " se intampla ceva???");
+//
+//                                        mTaskAdapter.addAndNotifyItem(position,taskToDelete);
+//                                        break;
+//                                    default:
+//                                        mTaskViewModel.delete(taskToDelete);
+//                                        break;
+//                                }
+//                            }
+//
+//                        })
+//                        .setAction("UNDO", new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//
+//                            }
+//                        }).show();
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
 

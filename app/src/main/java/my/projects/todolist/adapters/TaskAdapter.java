@@ -52,8 +52,22 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return mDiffer.getCurrentList().size();
     }
 
+    public Task getItemAt(int position){
+        return mDiffer.getCurrentList().get(position);
+    }
+
     public void submitList(List<Task> submitedTasks){
         mDiffer.submitList(submitedTasks);
+    }
+
+    public void addAndNotifyItem(int position,Task task){
+        mDiffer.getCurrentList().add(position,task);
+        notifyItemInserted(position);
+    }
+
+    public void removeAndNotifyItem(int position){
+        mDiffer.getCurrentList().remove(position);
+        notifyItemRemoved(position);
     }
 
     public class TaskViewHolder extends RecyclerView.ViewHolder {
