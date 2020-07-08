@@ -22,7 +22,7 @@
             android:layout_alignBaseline="@id/task_item_checkbox"
             android:layout_toEndOf="@id/task_item_checkbox"
             android:textColor="@android:color/black"
-            android:textStyle="bold" />
+             />
 
 
         <CheckBox

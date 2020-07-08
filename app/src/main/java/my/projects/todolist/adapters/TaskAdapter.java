@@ -1,8 +1,10 @@
 package my.projects.todolist.adapters;
 
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +18,7 @@ import my.projects.todolist.R;
 import my.projects.todolist.database.Task;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
+    private OnCheckboxListener mcheckboxListener ;
 
     private AsyncListDiffer<Task> mDiffer = new AsyncListDiffer<Task>(this,DIFF_CALLBACK);
 
@@ -44,12 +47,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         Task task = mDiffer.getCurrentList().get(position);
-        holder.mTaskName.setText(task.getName());
+        holder.displayItem(task);
     }
 
     @Override
     public int getItemCount() {
         return mDiffer.getCurrentList().size();
+    }
+
+    public void setCheckboxListener(OnCheckboxListener listener){
+        mcheckboxListener = listener;
     }
 
     public Task getItemAt(int position){
@@ -60,22 +67,57 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         mDiffer.submitList(submitedTasks);
     }
 
-    public void addAndNotifyItem(int position,Task task){
-        mDiffer.getCurrentList().add(position,task);
-        notifyItemInserted(position);
-    }
-
-    public void removeAndNotifyItem(int position){
-        mDiffer.getCurrentList().remove(position);
-        notifyItemRemoved(position);
-    }
+//    public void addAndNotifyItem(int position,Task task){
+//        mDiffer.getCurrentList().add(position,task);
+//        notifyItemInserted(position);
+//    }
+//
+//    public void removeAndNotifyItem(int position){
+//        mDiffer.getCurrentList().remove(position);
+//        notifyItemRemoved(position);
+//    }
 
     public class TaskViewHolder extends RecyclerView.ViewHolder {
         private TextView mTaskName;
+        private CheckBox mCheckBox;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
             mTaskName = itemView.findViewById(R.id.task_item_name);
+            mCheckBox = itemView.findViewById(R.id.task_item_checkbox);
+
+
+            mCheckBox.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    setItemStatus();
+                }
+            });
         }
+
+        public void displayItem(Task task){
+            mTaskName.setText(task.getName());
+            if (task.isDone()) {
+                mTaskName.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+            } else {
+                mTaskName.setPaintFlags(~Paint.STRIKE_THRU_TEXT_FLAG);
+            }
+
+        }
+
+
+        private void setItemStatus(){
+            int position = getAdapterPosition();
+            Task task = getItemAt(position);
+
+            boolean taskStatus = mcheckboxListener.changeItemStatus(task);
+            if (taskStatus) mTaskName.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+            else mTaskName.setPaintFlags(~Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+    }
+
+
+    public interface OnCheckboxListener{
+        boolean changeItemStatus(Task task);
     }
 }

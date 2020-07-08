@@ -33,7 +33,7 @@ import my.projects.todolist.database.TaskViewModel;
 
 import static android.content.ContentValues.TAG;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxListener {
     private TaskViewModel mTaskViewModel ;
     private TaskAdapter mTaskAdapter ;
     private RecyclerView mTaskList ;
@@ -70,6 +70,9 @@ public class HomeFragment extends Fragment {
         mTaskList = view.findViewById(R.id.home_fragment_item_list_recyclerview);
         mTaskList.setLayoutManager(new LinearLayoutManager(getContext()));
         mTaskList.setAdapter(mTaskAdapter);
+
+        mTaskAdapter.setCheckboxListener(this);
+
         mTaskViewModel =
                 new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory
                         .getInstance(getActivity().getApplication())).get(TaskViewModel.class);
@@ -154,4 +157,13 @@ public class HomeFragment extends Fragment {
     }
 
 
+    //this method will return true if the task is set to done, false otherwise
+    @Override
+    public boolean changeItemStatus(Task task) {
+        if(task.isDone()) task.setDone(false);
+        else task.setDone(true);
+
+        //TODO : update item in database
+        return task.isDone();
+    }
 }
