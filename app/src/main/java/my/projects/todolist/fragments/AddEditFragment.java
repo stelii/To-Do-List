@@ -13,7 +13,10 @@ import androidx.navigation.Navigation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -25,6 +28,8 @@ public class AddEditFragment extends Fragment {
     private EditText taskNameInput ;
     private FloatingActionButton addTaskFabButton ;
     private TaskViewModel mTaskViewModel ;
+
+    private Spinner priorityChoiceSpinner;
 
     public AddEditFragment() {
         // Required empty public constructor
@@ -58,6 +63,12 @@ public class AddEditFragment extends Fragment {
 
         taskNameInput = view.findViewById(R.id.add_edit_fragment_task_name_input);
         addTaskFabButton = view.findViewById(R.id.add_edit_fragment_fab_button_add_task);
+        priorityChoiceSpinner = view.findViewById(R.id.add_edit_fragment_priority_choice_spinner);
+
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(requireContext(),R.array.priority_choices,android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        priorityChoiceSpinner.setAdapter(spinnerAdapter);
+
 
         addTaskFabButton.setOnClickListener(new View.OnClickListener() {
             @Override
