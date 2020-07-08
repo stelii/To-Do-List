@@ -98,9 +98,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         public void displayItem(Task task){
             mTaskName.setText(task.getName());
             if (task.isDone()) {
-                mTaskName.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                mTaskName.setPaintFlags(mTaskName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                mCheckBox.setChecked(true);
             } else {
-                mTaskName.setPaintFlags(~Paint.STRIKE_THRU_TEXT_FLAG);
+                mTaskName.setPaintFlags(mTaskName.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+                mCheckBox.setChecked(false);
             }
 
         }
@@ -111,8 +113,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             Task task = getItemAt(position);
 
             boolean taskStatus = mcheckboxListener.changeItemStatus(task);
-            if (taskStatus) mTaskName.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-            else mTaskName.setPaintFlags(~Paint.STRIKE_THRU_TEXT_FLAG);
+            if (taskStatus) mTaskName.setPaintFlags(mTaskName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            else mTaskName.setPaintFlags(mTaskName.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
         }
     }
 

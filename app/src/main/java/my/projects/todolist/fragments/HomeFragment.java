@@ -163,7 +163,7 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
         if(task.isDone()) task.setDone(false);
         else task.setDone(true);
 
-        //TODO : update item in database
+        mTaskViewModel.update(task);
         return task.isDone();
     }
 }
