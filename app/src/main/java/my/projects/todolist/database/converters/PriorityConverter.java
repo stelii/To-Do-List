@@ -10,7 +10,7 @@ import my.projects.todolist.models.Priority;
 public class PriorityConverter {
 
     @TypeConverter
-    public static String fromPrioritytoString(Priority priority){
+    public static String fromPriorityToString(Priority priority){
         if(priority == null) return null ;
 
         return priority.getName();

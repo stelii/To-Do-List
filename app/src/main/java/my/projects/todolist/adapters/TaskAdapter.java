@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -48,7 +49,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         Task task = mDiffer.getCurrentList().get(position);
         holder.displayItem(task);
+
     }
+
 
     @Override
     public int getItemCount() {
@@ -80,12 +83,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public class TaskViewHolder extends RecyclerView.ViewHolder {
         private TextView mTaskName;
         private CheckBox mCheckBox;
+        private ImageView mPriorityArrow ;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
             mTaskName = itemView.findViewById(R.id.task_item_name);
             mCheckBox = itemView.findViewById(R.id.task_item_checkbox);
-
+            mPriorityArrow = itemView.findViewById(R.id.task_item_priority_icon);
 
             mCheckBox.setOnClickListener(new View.OnClickListener(){
                 @Override
@@ -97,6 +101,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         public void displayItem(Task task){
             mTaskName.setText(task.getName());
+
             if (task.isDone()) {
                 mTaskName.setPaintFlags(mTaskName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 mCheckBox.setChecked(true);
@@ -104,6 +109,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 mTaskName.setPaintFlags(mTaskName.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
                 mCheckBox.setChecked(false);
             }
+
+            //TODO : 2. when binding the viewholder, i need to check its priority and depending on that i display a green, orange or a red arrow
+            mPriorityArrow.setColorFilter(task.getPriority().getColor());
 
         }
 

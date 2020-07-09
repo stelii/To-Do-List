@@ -71,6 +71,8 @@ public class AddEditFragment extends Fragment {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         priorityChoiceSpinner.setAdapter(spinnerAdapter);
 
+        //TODO : 1. when the user wants to edit the task, the priority for the current item needs to be displayed on spinner
+
 
         addTaskFabButton.setOnClickListener(new View.OnClickListener() {
             @Override
