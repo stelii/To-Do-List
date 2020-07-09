@@ -30,6 +30,7 @@ import my.projects.todolist.R;
 import my.projects.todolist.adapters.TaskAdapter;
 import my.projects.todolist.database.Task;
 import my.projects.todolist.database.TaskViewModel;
+import my.projects.todolist.models.Priority;
 
 import static android.content.ContentValues.TAG;
 
@@ -91,7 +92,6 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
                 navController.navigate(R.id.action_homeFragment_to_addEditFragment);
             }
         });
-
 
 
         enableSwipeToDeleteAndUndo(mTaskList);

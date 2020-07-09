@@ -23,6 +23,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import my.projects.todolist.R;
 import my.projects.todolist.database.Task;
 import my.projects.todolist.database.TaskViewModel;
+import my.projects.todolist.database.converters.PriorityConverter;
+import my.projects.todolist.models.Priority;
 
 public class AddEditFragment extends Fragment {
     private EditText taskNameInput ;
@@ -74,7 +76,9 @@ public class AddEditFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String taskName = taskNameInput.getText().toString();
+                String taskPriority = priorityChoiceSpinner.getSelectedItem().toString();
                 Task task = new Task(taskName);
+                task.setPriority(PriorityConverter.fromStringToPriority(taskPriority));
                 mTaskViewModel.insert(task);
 
                 NavController navController = Navigation.findNavController(requireActivity(),R.id.nav_host_fragment);
