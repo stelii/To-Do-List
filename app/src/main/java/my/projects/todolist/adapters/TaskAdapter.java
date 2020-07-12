@@ -56,7 +56,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.displayItem(task);
 
         //TODO : Add functionality to sort the list depending on priority
-
     }
 
 
@@ -77,8 +76,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return mDiffer.getCurrentList().get(position);
     }
 
-    public void submitList(List<Task> submitedTasks){
-        mDiffer.submitList(submitedTasks);
+    public void submitList(List<Task> submittedTasks){
+        mDiffer.submitList(submittedTasks);
     }
 
 
@@ -116,6 +115,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 mTaskName.setPaintFlags(mTaskName.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
                 mCheckBox.setChecked(false);
             }
+            Log.d(TAG, "displayItem: " + task.getName());
             mPriorityArrow.setColorFilter(task.getPriority().getColor());
 
         }

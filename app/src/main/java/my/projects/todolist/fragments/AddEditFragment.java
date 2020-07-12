@@ -9,13 +9,17 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -86,23 +90,29 @@ public class AddEditFragment extends Fragment {
         addTaskFabButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(taskNameInput.getText().toString().isEmpty()){
+                    Toast.makeText(requireContext(), "Please insert a name for this task", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 String taskName = taskNameInput.getText().toString();
                 String taskPriority = priorityChoiceSpinner.getSelectedItem().toString();
 
-                if(getArguments() != null){
-                    AddEditFragmentArgs args = AddEditFragmentArgs.fromBundle(getArguments());
-                    Task task = mTaskViewModel.getTask(args.getTaskArg());
-
-                    task.setName(taskName);
-                    task.setPriority(PriorityConverter.fromStringToPriority(taskPriority));
-                    mTaskViewModel.update(task);
-                }else{
-                    Task task = new Task.TaskBuilder()
-                            .setName(taskName)
-                            .setPriority(PriorityConverter.fromStringToPriority(taskPriority))
-                            .createTask();
+//                if(getArguments().getInt("taskArg") != -1){
+//                    AddEditFragmentArgs args = AddEditFragmentArgs.fromBundle(getArguments());
+//                    Task task = mTaskViewModel.getTask(args.getTaskArg());
+//
+//                    task.setName(taskName);
+//                    task.setPriority(PriorityConverter.fromStringToPriority(taskPriority));
+//                    mTaskViewModel.update(task);
+//                }else{
+//                    Log.d(TAG, "onClick: " + " in else sunt aici ");
+                    Task task = new Task(taskName,PriorityConverter.fromStringToPriority(taskPriority));
+//                    Task task = new Task.TaskBuilder()
+//                            .setName(taskName)
+//                            .setPriority(PriorityConverter.fromStringToPriority(taskPriority))
+//                            .createTask();
                     mTaskViewModel.insert(task);
-                }
+//                }
                 NavController navController = Navigation.findNavController(requireActivity(),R.id.nav_host_fragment);
                 navController.navigateUp();
             }

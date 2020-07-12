@@ -12,4 +12,8 @@
             <item>Medium</item>
             <item>High</item>
         </string-array>
+
+    <string name="open_navigation_drawer">Open Navigation Drawer</string>
+    <string name="close_navigation_drawer">Close Navigation Drawer</string>
+
 </resources>
