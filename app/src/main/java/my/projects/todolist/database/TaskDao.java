@@ -24,4 +24,7 @@ public interface TaskDao {
     @Update
     void update(Task task);
 
+    @Query("SELECT * FROM tasks_table WHERE id = :id")
+    Task getTask(int id);
+
 }

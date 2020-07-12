@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Delete;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class TaskRepository {
     private TaskDao taskDao ;
@@ -34,9 +35,18 @@ public class TaskRepository {
         new UpdateAsyncTask(taskDao).execute(task);
     }
 
+    public Task getTask(int id){
+        GetTaskAsyncTask getTaskAsyncTask = new GetTaskAsyncTask(taskDao);
+        try {
+            return getTaskAsyncTask.execute(id).get();
+        } catch (ExecutionException | InterruptedException e) {
+            return null ;
+        }
+    }
 
 
-    private class InsertAsyncTask extends AsyncTask<Task,Void,Void>{
+
+    private static class InsertAsyncTask extends AsyncTask<Task,Void,Void>{
         private TaskDao taskDao ;
 
         public InsertAsyncTask(TaskDao taskDao){
@@ -50,7 +60,7 @@ public class TaskRepository {
         }
     }
 
-    private class DeleteAsyncTask extends AsyncTask<Task,Void,Void>{
+    private static class DeleteAsyncTask extends AsyncTask<Task,Void,Void>{
         private TaskDao taskDao ;
 
         public DeleteAsyncTask(TaskDao taskDao){
@@ -64,7 +74,7 @@ public class TaskRepository {
         }
     }
 
-    private class UpdateAsyncTask extends AsyncTask<Task,Void,Void>{
+    private static class UpdateAsyncTask extends AsyncTask<Task,Void,Void>{
         private TaskDao taskDao ;
 
         public UpdateAsyncTask(TaskDao taskDao){
@@ -75,6 +85,19 @@ public class TaskRepository {
         protected Void doInBackground(Task... tasks) {
             taskDao.update(tasks[0]);
             return null;
+        }
+    }
+
+    private static class GetTaskAsyncTask extends AsyncTask<Integer,Void,Task>{
+        private TaskDao taskDao ;
+
+        public GetTaskAsyncTask(TaskDao taskDao){
+            this.taskDao = taskDao;
+        }
+
+        @Override
+        protected Task doInBackground(Integer... integers) {
+            return taskDao.getTask(integers[0]);
         }
     }
 }

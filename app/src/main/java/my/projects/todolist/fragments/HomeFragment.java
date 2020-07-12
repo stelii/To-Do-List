@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavGraph;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -34,7 +35,7 @@ import my.projects.todolist.models.Priority;
 
 import static android.content.ContentValues.TAG;
 
-public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxListener {
+public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxListener, TaskAdapter.OnItemClickListener {
     private TaskViewModel mTaskViewModel ;
     private TaskAdapter mTaskAdapter ;
     private RecyclerView mTaskList ;
@@ -73,6 +74,7 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
         mTaskList.setAdapter(mTaskAdapter);
 
         mTaskAdapter.setCheckboxListener(this);
+        mTaskAdapter.setOnItemClickListener(this);
 
         mTaskViewModel =
                 new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory
@@ -165,5 +167,15 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
 
         mTaskViewModel.update(task);
         return task.isDone();
+    }
+
+    @Override
+    public void onItemShortClick(Task task) {
+        int idToPass = task.getId();
+        HomeFragmentDirections.ActionHomeFragmentToAddEditFragment action = HomeFragmentDirections.actionHomeFragmentToAddEditFragment();
+        action.setTaskArg(idToPass);
+
+        NavController navController = Navigation.findNavController(requireActivity(),R.id.nav_host_fragment);
+        navController.navigate(action);
     }
 }

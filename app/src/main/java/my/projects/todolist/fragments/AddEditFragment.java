@@ -5,15 +5,14 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -24,7 +23,8 @@ import my.projects.todolist.R;
 import my.projects.todolist.database.Task;
 import my.projects.todolist.database.TaskViewModel;
 import my.projects.todolist.database.converters.PriorityConverter;
-import my.projects.todolist.models.Priority;
+
+import static android.content.ContentValues.TAG;
 
 public class AddEditFragment extends Fragment {
     private EditText taskNameInput ;
@@ -71,7 +71,16 @@ public class AddEditFragment extends Fragment {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         priorityChoiceSpinner.setAdapter(spinnerAdapter);
 
-        //TODO : 1. when the user wants to edit the task, the priority for the current item needs to be displayed on spinner
+        assert getArguments() != null;
+        if(getArguments().getInt("taskArg") != -1){
+            Log.d(TAG, "onViewCreated: " + "ARGUMENTS: " + getArguments().toString());
+            AddEditFragmentArgs args = AddEditFragmentArgs.fromBundle(getArguments());
+            int idPassed = args.getTaskArg();
+            Task task = mTaskViewModel.getTask(idPassed);
+
+            taskNameInput.setText(task.getName());
+            priorityChoiceSpinner.setSelection(task.getPriority().getValue());
+        }
 
 
         addTaskFabButton.setOnClickListener(new View.OnClickListener() {
@@ -79,16 +88,28 @@ public class AddEditFragment extends Fragment {
             public void onClick(View v) {
                 String taskName = taskNameInput.getText().toString();
                 String taskPriority = priorityChoiceSpinner.getSelectedItem().toString();
-                Task task = new Task(taskName);
-                task.setPriority(PriorityConverter.fromStringToPriority(taskPriority));
-                mTaskViewModel.insert(task);
 
+                if(getArguments() != null){
+                    AddEditFragmentArgs args = AddEditFragmentArgs.fromBundle(getArguments());
+                    Task task = mTaskViewModel.getTask(args.getTaskArg());
+
+                    task.setName(taskName);
+                    task.setPriority(PriorityConverter.fromStringToPriority(taskPriority));
+                    mTaskViewModel.update(task);
+                }else{
+                    Task task = new Task.TaskBuilder()
+                            .setName(taskName)
+                            .setPriority(PriorityConverter.fromStringToPriority(taskPriority))
+                            .createTask();
+                    mTaskViewModel.insert(task);
+                }
                 NavController navController = Navigation.findNavController(requireActivity(),R.id.nav_host_fragment);
                 navController.navigateUp();
             }
         });
 
     }
+
 
 
 }

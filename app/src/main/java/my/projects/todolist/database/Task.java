@@ -20,8 +20,12 @@ public class Task {
 
     private Priority priority ;
 
-    public Task(String name) {
-        this.name = name;
+    public Task(TaskBuilder taskBuilder) {
+        this.name = taskBuilder.name;
+        this.priority = taskBuilder.priority;
+    }
+
+    public Task(String name, Priority priority) {
     }
 
     public String getName() {
@@ -55,5 +59,25 @@ public class Task {
 
     public void setPriority(Priority priority) {
         this.priority = priority;
+    }
+
+
+    public static class TaskBuilder {
+        private String name;
+        private Priority priority;
+
+        public TaskBuilder setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public TaskBuilder setPriority(Priority priority) {
+            this.priority = priority;
+            return this;
+        }
+
+        public Task createTask() {
+            return new Task(this);
+        }
     }
 }
