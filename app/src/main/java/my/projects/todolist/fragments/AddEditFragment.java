@@ -1,5 +1,6 @@
 package my.projects.todolist.fragments;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -10,20 +11,22 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.Calendar;
+import java.util.Date;
 
 import my.projects.todolist.R;
 import my.projects.todolist.database.Task;
@@ -34,6 +37,12 @@ import static android.content.ContentValues.TAG;
 
 public class AddEditFragment extends Fragment {
     private EditText taskNameInput ;
+    private ImageView datePicker ;
+    private EditText datePickerDisplay ;
+
+    private int mYear, mMonth, mDay , mHour, mMinute ;
+
+
     private FloatingActionButton addTaskFabButton ;
     private TaskViewModel mTaskViewModel ;
 
@@ -70,6 +79,14 @@ public class AddEditFragment extends Fragment {
                 ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication())).get(TaskViewModel.class);
 
         taskNameInput = view.findViewById(R.id.add_edit_fragment_task_name_input);
+        datePicker = view.findViewById(R.id.add_edit_fragment_task_date_input);
+        datePickerDisplay = view.findViewById(R.id.add_edit_fragment_task_date_display);
+        datePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setDatePickerDialog();
+            }
+        });
         addTaskFabButton = view.findViewById(R.id.add_edit_fragment_fab_button_add_task);
         priorityChoiceSpinner = view.findViewById(R.id.add_edit_fragment_priority_choice_spinner);
 
@@ -120,6 +137,22 @@ public class AddEditFragment extends Fragment {
             }
         });
 
+    }
+
+    private void setDatePickerDialog(){
+        final Calendar myCalendar = Calendar.getInstance();
+        mYear = myCalendar.get(Calendar.YEAR);
+        mMonth = myCalendar.get(Calendar.MONTH);
+        mDay = myCalendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                datePickerDisplay.setText(dayOfMonth + "/" + (month+1) + "/" + year);
+            }
+        },mYear,mMonth,mDay);
+
+        datePickerDialog.show();
     }
 
     private void hideKeyboard(View view){
