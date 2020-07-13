@@ -1,5 +1,6 @@
 package my.projects.todolist.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -61,7 +63,7 @@ public class AddEditFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         mTaskViewModel = new ViewModelProvider(this,
@@ -97,27 +99,34 @@ public class AddEditFragment extends Fragment {
                 String taskName = taskNameInput.getText().toString();
                 String taskPriority = priorityChoiceSpinner.getSelectedItem().toString();
 
-//                if(getArguments().getInt("taskArg") != -1){
-//                    AddEditFragmentArgs args = AddEditFragmentArgs.fromBundle(getArguments());
-//                    Task task = mTaskViewModel.getTask(args.getTaskArg());
-//
-//                    task.setName(taskName);
-//                    task.setPriority(PriorityConverter.fromStringToPriority(taskPriority));
-//                    mTaskViewModel.update(task);
-//                }else{
-//                    Log.d(TAG, "onClick: " + " in else sunt aici ");
+                if(getArguments().getInt("taskArg") != -1){
+                    AddEditFragmentArgs args = AddEditFragmentArgs.fromBundle(getArguments());
+                    Task task = mTaskViewModel.getTask(args.getTaskArg());
+
+                    task.setName(taskName);
+                    task.setPriority(PriorityConverter.fromStringToPriority(taskPriority));
+                    mTaskViewModel.update(task);
+                }else{
                     Task task = new Task(taskName,PriorityConverter.fromStringToPriority(taskPriority));
 //                    Task task = new Task.TaskBuilder()
 //                            .setName(taskName)
 //                            .setPriority(PriorityConverter.fromStringToPriority(taskPriority))
 //                            .createTask();
                     mTaskViewModel.insert(task);
-//                }
+                }
+                hideKeyboard(view);
                 NavController navController = Navigation.findNavController(requireActivity(),R.id.nav_host_fragment);
-                navController.navigateUp();
+                navController.navigate(R.id.action_addEditFragment_to_homeFragment);
             }
         });
 
+    }
+
+    private void hideKeyboard(View view){
+        Context context = view.getContext();
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        assert imm != null;
+        imm.hideSoftInputFromWindow(view.getWindowToken(),0);
     }
 
 

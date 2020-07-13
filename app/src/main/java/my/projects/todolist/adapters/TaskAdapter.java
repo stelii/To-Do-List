@@ -55,7 +55,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         Task task = mDiffer.getCurrentList().get(position);
         holder.displayItem(task);
 
-        //TODO : Add functionality to sort the list depending on priority
+        //TODO : Add functionality to sort the list depending on priority ?? idk
     }
 
 
