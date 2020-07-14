@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import my.projects.todolist.R;
@@ -114,9 +115,67 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                int pos = viewHolder.getAdapterPosition();
-                Task taskDeleted = mTaskAdapter.getItemAt(pos);
-                mTaskViewModel.delete(taskDeleted);
+                //iau pozitia elementului care a fost inlaturat din lista
+                final int adapterPosition = viewHolder.getAdapterPosition();
+                //iau elementul de la pozitia respectiva
+                final Task taskDeleted = mTaskAdapter.getItemAt(adapterPosition);
+
+                //creez o lista temporara pentru a stoca toate elementele listei pana in acest moment
+                final List<Task> temporaryTaks = new ArrayList<>(mTaskAdapter.getTasks());
+
+                //creez un snackbar care primeste ca parametru recyclerview, mesajul si durata acestuia
+                Snackbar snackbar = Snackbar.make(mTaskList,"ITEM REMOVED",Snackbar.LENGTH_LONG)
+                        .setAction("UNDO", new View.OnClickListener() {
+                            //setez o actiune in momentul in care se apasa "UNDO"
+                            @Override
+                            public void onClick(View v) {
+                                //daca se apasa "UNDO", adica utilizatorul vrea ca acel element sa fie adaugat inapoi
+
+                                //se adauga elementul la pozitia respectiva
+                                temporaryTaks.add(adapterPosition,taskDeleted);
+                                //notificam adaptorul ca s-a inserat un element pe pozitia "adapterPosition"
+                                mTaskAdapter.notifyItemInserted(adapterPosition);
+
+                                //facem ca recyclerview sa scroleze pana la pozitia respectiva
+                                mTaskList.scrollToPosition(adapterPosition);
+
+
+                            }
+                        }).addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
+
+                            @Override
+                            public void onDismissed(Snackbar transientBottomBar, int event) {
+                                //metoda onDismissed este apelata in momentul in care bara de snackbar a fost respinsa
+
+                                //daca bara nu a fost inalturata "in mod natural" (adica dupa ce s-a scurs durata acestuia)
+                                //inseamna ca snackbarul NU a fost inalturat de catre utilizator
+                                if(event != DISMISS_EVENT_ACTION){
+                                    //DISMISS_EVENT_ACTION = denota faptul ca s-a petrecut un eveniment de tip click (adica click de la utlizator)
+                                    Log.d(TAG, "onDismissed: " + "SnackBar not dismissed by click event");
+                                    //inseamna ca snackbarul a fost inalturat fara ca utilizatorul sa fii apasat pe "UNDO"
+
+                                    mTaskViewModel.delete(taskDeleted);
+                                }
+                            }
+                        });
+                //afisam snackbar
+                snackbar.show();
+
+                //lucrurile astea se intampla inainte ca snackbar sa apara
+                //se sterge elementul de la pozitia "adapterPosition"
+                temporaryTaks.remove(adapterPosition);
+                //trimitem aceasta lista cu un element mai putin pentru ca recyclerview sa-si dea refresh
+                mTaskAdapter.submitList(temporaryTaks);
+
+
+
+
+
+//                mTaskViewModel.delete(taskDeleted);
+
+
+
+
 //                final int position = viewHolder.getAdapterPosition();
 //                final Task taskToDelete = mTaskAdapter.getItemAt(position);
 //                mTaskAdapter.removeAndNotifyItem(position);

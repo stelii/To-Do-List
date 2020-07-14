@@ -85,6 +85,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         mDiffer.submitList(submittedTasks);
     }
 
+    public List<Task> getTasks(){
+        return mDiffer.getCurrentList();
+    }
+
 
     public class TaskViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView mTaskName;
