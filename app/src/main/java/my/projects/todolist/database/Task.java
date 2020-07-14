@@ -1,15 +1,18 @@
 package my.projects.todolist.database;
 
+import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverter;
 import androidx.room.TypeConverters;
 
+import java.util.Date;
+
+import my.projects.todolist.database.converters.DateConverter;
 import my.projects.todolist.database.converters.PriorityConverter;
 import my.projects.todolist.models.Priority;
 
 @Entity(tableName = "tasks_table")
-@TypeConverters({PriorityConverter.class})
 public class Task {
 
     @PrimaryKey(autoGenerate = true)
@@ -17,6 +20,8 @@ public class Task {
 
     private String name ;
     private boolean done ;
+    @Nullable
+    private Date date ;
 
     private Priority priority ;
 
@@ -63,8 +68,15 @@ public class Task {
         this.priority = priority;
     }
 
+    public Date getDate() {
+        return date;
+    }
 
-//    public static class TaskBuilder {
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    //    public static class TaskBuilder {
 //        private String name;
 //        private Priority priority;
 //

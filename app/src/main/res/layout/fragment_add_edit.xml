@@ -41,12 +41,33 @@
         app:layout_constraintStart_toEndOf="@id/add_edit_fragment_task_date_display"
         app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_task_name_input" />
 
+    <EditText
+        android:id="@+id/add_edit_fragment_task_time_display"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="20dp"
+        android:hint="Time"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_task_date_display" />
+
+    <ImageView
+        android:id="@+id/add_edit_fragment_task_time_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="28dp"
+        android:tint="@android:color/holo_blue_dark"
+        android:src="@drawable/baseline_schedule_black_18dp"
+        app:layout_constraintStart_toEndOf="@id/add_edit_fragment_task_time_display"
+        app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_task_date_input" />
+
     <Spinner
         android:id="@+id/add_edit_fragment_priority_choice_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_task_date_display"
+        app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_task_time_display"
         app:layout_constraintStart_toStartOf="parent"
         />
 

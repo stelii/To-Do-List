@@ -1,6 +1,7 @@
 package my.projects.todolist.adapters;
 
 import android.graphics.Paint;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,11 @@ import androidx.recyclerview.widget.AsyncListDiffer;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import my.projects.todolist.R;
 import my.projects.todolist.database.Task;
@@ -85,6 +90,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         private TextView mTaskName;
         private CheckBox mCheckBox;
         private ImageView mPriorityArrow ;
+        private TextView mDueDate ;
 
         private OnItemClickListener mOnItemClickListener;
 
@@ -96,6 +102,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             mTaskName = itemView.findViewById(R.id.task_item_name);
             mCheckBox = itemView.findViewById(R.id.task_item_checkbox);
             mPriorityArrow = itemView.findViewById(R.id.task_item_priority_icon);
+            mDueDate = itemView.findViewById(R.id.task_item_due_date);
 
             mCheckBox.setOnClickListener(new View.OnClickListener(){
                 @Override
@@ -118,8 +125,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             Log.d(TAG, "displayItem: " + task.getName());
             mPriorityArrow.setColorFilter(task.getPriority().getColor());
 
+
+            Date date = task.getDate();
+            if(date != null)  mDueDate.setText(getDateAsString(date));
         }
 
+        private String getDateAsString(Date date){
+            String dateString = DateFormat.format("dd/MM/yyyy",date.getTime()).toString();
+            return dateString ;
+        }
 
         private void setItemStatus(){
             int position = getAdapterPosition();
