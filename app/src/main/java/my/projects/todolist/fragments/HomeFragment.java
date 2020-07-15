@@ -1,5 +1,7 @@
 package my.projects.todolist.fragments;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 
@@ -16,12 +18,18 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -32,6 +40,7 @@ import my.projects.todolist.R;
 import my.projects.todolist.adapters.TaskAdapter;
 import my.projects.todolist.database.Task;
 import my.projects.todolist.database.TaskViewModel;
+import my.projects.todolist.database.converters.PriorityConverter;
 import my.projects.todolist.models.Priority;
 
 import static android.content.ContentValues.TAG;
@@ -40,6 +49,11 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
     private TaskViewModel mTaskViewModel ;
     private TaskAdapter mTaskAdapter ;
     private RecyclerView mTaskList ;
+
+    private FloatingActionButton mAddNewTaskFabBtn ;
+
+    private EditText mQuickTaskName ;
+    private ImageView mQuickAddBtn ;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -69,6 +83,42 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mAddNewTaskFabBtn = view.findViewById(R.id.home_fragment_fab_button_add);
+        mQuickTaskName = view.findViewById(R.id.home_fragment_task_name_quick_input);
+        mQuickTaskName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                Log.d(TAG, "beforeTextChanged: " + "???");
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.d(TAG, "onTextChanged: " + "???");
+                mQuickAddBtn.setVisibility(View.VISIBLE);
+                mAddNewTaskFabBtn.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.d(TAG, "afterTextChanged: " + "???");
+                if(s.toString().isEmpty()) {
+                    mAddNewTaskFabBtn.setVisibility(View.VISIBLE);
+                    mQuickAddBtn.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+        mQuickAddBtn =  view.findViewById(R.id.home_fragment_button_quick_add);
+        mQuickAddBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String taskName = mQuickTaskName.getText().toString();
+                mTaskViewModel.insert(new Task(taskName, PriorityConverter.fromStringToPriority("Low")));
+                mQuickTaskName.setText("");
+                hideKeyboard(v);
+
+            }
+        });
+
         mTaskAdapter = new TaskAdapter();
         mTaskList = view.findViewById(R.id.home_fragment_item_list_recyclerview);
         mTaskList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -88,7 +138,7 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
             }
         });
 
-        view.findViewById(R.id.home_fragment_fab_button_add).setOnClickListener(new View.OnClickListener() {
+        mAddNewTaskFabBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 NavController navController = Navigation.findNavController(requireActivity(),R.id.nav_host_fragment);
@@ -99,6 +149,13 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
 
         enableSwipeToDeleteAndUndo(mTaskList);
 
+    }
+
+    private static void hideKeyboard(View view){
+        Context context = view.getContext();
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        assert imm != null;
+        imm.hideSoftInputFromWindow(view.getWindowToken(),0);
     }
 
     private void enableSwipeToDeleteAndUndo(RecyclerView recyclerView){
