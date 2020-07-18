@@ -12,10 +12,12 @@ import androidx.navigation.Navigation;
 
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ToggleButton;
 
 import com.google.android.material.navigation.NavigationView;
@@ -23,9 +25,13 @@ import com.google.android.material.navigation.NavigationView;
 import my.projects.todolist.database.TaskViewModel;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String TAG = "Main activity";
+
     private NavigationView navView;
     private DrawerLayout drawerLayout;
     private TaskViewModel taskViewModel;
+
+    private Toolbar toolbar ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,13 +50,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpToolbar() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_navigation_drawer, R.string.close_navigation_drawer);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
+    }
+
+    public void switchToolbar(int layout){
+        View v = getLayoutInflater().inflate(layout,null);
+        toolbar.removeAllViews();
+        toolbar.addView(v);
+
+
     }
 
     private void handleNavViewMenu() {
@@ -67,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     private void navigateToHomeFragment() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -85,6 +101,13 @@ public class MainActivity extends AppCompatActivity {
         menuInflater.inflate(R.menu.toolbar_menu, menu);
         return true;
     }
+
+//    @Override
+//    protected void onRestart() {
+//        super.onRestart();
+//        Log.d(TAG, "onRestart: " + "??? ceva ???");
+//        drawerLayout.closeDrawer(navView);
+//    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="200dp"
     android:gravity="center"
-    android:background="@android:color/holo_orange_dark">
+    android:background="@android:color/holo_red_light">
 
 
     <TextView
@@ -17,7 +17,7 @@
         android:id="@+id/nav_view_header_app_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher_foreground"
+
 
         android:layout_below="@+id/nav_view_header_app_name"
         />

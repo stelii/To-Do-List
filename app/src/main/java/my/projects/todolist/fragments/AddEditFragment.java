@@ -7,6 +7,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.ToolbarWidgetWrapper;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -14,6 +16,8 @@ import androidx.navigation.Navigation;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -24,12 +28,14 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Calendar;
 import java.util.Date;
 
+import my.projects.todolist.MainActivity;
 import my.projects.todolist.R;
 import my.projects.todolist.database.Task;
 import my.projects.todolist.database.TaskViewModel;
@@ -45,6 +51,8 @@ public class AddEditFragment extends Fragment {
     private int mYear, mMonth, mDay , mHour, mMinute ;
     private Date dueDate = null;
 
+    private DatePicker mDatePicker ;
+    private TimePicker mTimePicker ;
 
     private FloatingActionButton addTaskFabButton ;
     private TaskViewModel mTaskViewModel ;
@@ -65,6 +73,8 @@ public class AddEditFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+//        ((MainActivity) getActivity()).switchToolbar(R.layout.toolbar_layout_add_edit_fragment);
     }
 
     @Override
@@ -77,6 +87,7 @@ public class AddEditFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
 
         mTaskViewModel = new ViewModelProvider(this,
                 ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication())).get(TaskViewModel.class);
@@ -133,11 +144,11 @@ public class AddEditFragment extends Fragment {
 
                     task.setName(taskName);
                     task.setPriority(PriorityConverter.fromStringToPriority(taskPriority));
-                    task.setDate(dueDate);
+                    task.setDate(getDateFromPickers(mDatePicker,mTimePicker));
                     mTaskViewModel.update(task);
                 }else{
                     Task task = new Task(taskName,PriorityConverter.fromStringToPriority(taskPriority));
-                    task.setDate(dueDate);
+                    task.setDate(getDateFromPickers(mDatePicker,mTimePicker));
 //                    Task task = new Task.TaskBuilder()
 //                            .setName(taskName)
 //                            .setPriority(PriorityConverter.fromStringToPriority(taskPriority))
@@ -152,6 +163,7 @@ public class AddEditFragment extends Fragment {
 
     }
 
+
     private void setDatePickerDialog(){
         final Calendar myCalendar = Calendar.getInstance();
         mYear = myCalendar.get(Calendar.YEAR);
@@ -163,8 +175,7 @@ public class AddEditFragment extends Fragment {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 datePickerDisplay.setText(dayOfMonth + "/" + (month+1) + "/" + year);
-                dueDate = getDateFromDatePicker(view);
-                Log.d(TAG, "onDateSet 2 : " + dueDate.getTime());
+                mDatePicker = view ;
             }
         },mYear,mMonth,mDay);
 
@@ -182,31 +193,27 @@ public class AddEditFragment extends Fragment {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 timePickerDisplay.setText(hourOfDay + ":" + minute);
-
+                mTimePicker = view ;
             }
         },mHour,mMinute,true);
 
         timePickerDialog.show();
     }
 
-    private static Date getDateFromDatePicker(DatePicker datePicker){
+    private static Date getDateFromPickers(DatePicker datePicker,TimePicker timePicker){
         Calendar calendar = Calendar.getInstance();
         int day = datePicker.getDayOfMonth();
         int month = datePicker.getMonth();
         int year = datePicker.getYear();
 
-        calendar.set(year,month,day);
-        return calendar.getTime();
-    }
-
-    private static Date getDateFromTimePicker(TimePicker timePicker){
-        Calendar calendar = Calendar.getInstance();
         int hour = timePicker.getHour();
         int minute = timePicker.getMinute();
 
-        calendar.set(hour,minute);
+        calendar.set(year,month,day,hour,minute);
         return calendar.getTime();
     }
+
+
 
     private void hideKeyboard(View view){
         Context context = view.getContext();

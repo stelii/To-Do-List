@@ -15,7 +15,15 @@
         <include
             android:id="@+id/main_activity_toolbar"
             layout="@layout/toolbar_layout"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="visible"/>
+
+<!--        <include-->
+<!--            android:id="@+id/add_edit_fragment_toolbar"-->
+<!--            layout="@layout/toolbar_layout_add_edit_fragment"-->
+<!--            android:visibility="gone"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            />-->
 
         <fragment
             android:id="@+id/nav_host_fragment"
