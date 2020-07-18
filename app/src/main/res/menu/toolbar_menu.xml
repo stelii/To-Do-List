@@ -5,4 +5,10 @@
         app:showAsAction="never"
         android:id="@+id/toolbar_menu_delete_all"
         android:title="Delete All" />
+
+    <item app:showAsAction="always"
+        android:id="@+id/toolbar_menu_save_button"
+        android:icon="@drawable/ic_baseline_check_48"
+        android:iconTint="@android:color/holo_red_dark"
+        android:title="Save task" />
 </menu>

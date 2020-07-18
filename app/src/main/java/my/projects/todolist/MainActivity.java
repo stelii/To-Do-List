@@ -11,6 +11,7 @@ import androidx.navigation.NavGraph;
 import androidx.navigation.Navigation;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -59,13 +60,13 @@ public class MainActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
     }
 
-    public void switchToolbar(int layout){
-        View v = getLayoutInflater().inflate(layout,null);
-        toolbar.removeAllViews();
-        toolbar.addView(v);
-
-
-    }
+//    public void switchToolbar(int layout){
+//        View v = getLayoutInflater().inflate(layout,null);
+//        toolbar.removeAllViews();
+//        toolbar.addView(v);
+//
+//
+//    }
 
     private void handleNavViewMenu() {
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -73,7 +74,13 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.nav_view_menu_home:
-                        navigateToHomeFragment();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                navigateToHomeFragment();
+                            }
+                        },260);
+                        drawerLayout.closeDrawer(navView);
                         return true;
                     default:
                         return false;
@@ -102,7 +109,14 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-//    @Override
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.toolbar_menu_save_button).setVisible(false);
+        invalidateOptionsMenu();
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    //    @Override
 //    protected void onRestart() {
 //        super.onRestart();
 //        Log.d(TAG, "onRestart: " + "??? ceva ???");
@@ -114,10 +128,9 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.toolbar_menu_delete_all:
                 taskViewModel.deleteAll();
-                return true;
-
+                return false;
             default:
-                return true;
+                return false;
         }
     }
 

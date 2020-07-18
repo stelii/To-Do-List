@@ -10,7 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
         <activity android:name=".MainActivity"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:hardwareAccelerated="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

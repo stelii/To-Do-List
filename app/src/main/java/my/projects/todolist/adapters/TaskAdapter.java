@@ -135,8 +135,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
 
         private String getDateAsString(Date date){
-            String dateString = DateFormat.format("dd/MM/yyyy HH:mm",date.getTime()).toString();
-            return dateString ;
+            return DateFormat.format("dd/MM/yyyy HH:mm",date.getTime()).toString();
         }
 
         private void setItemStatus(){

@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -81,6 +82,10 @@ public class AddEditFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+        //raporteaza faptul ca acest fragment vrea sa participe la popularea elementelor meniului de toolbar primind un apel la metodele care au legatura cu meniul
+        //ex : onPrepareOptionsMenu(Menu menu)
+        setHasOptionsMenu(true);
         return inflater.inflate(R.layout.fragment_add_edit, container, false);
     }
 
@@ -129,38 +134,52 @@ public class AddEditFragment extends Fragment {
         }
 
 
-        addTaskFabButton.setOnClickListener(new View.OnClickListener() {
+
+        view.findViewById(R.id.add_edit_fragment_task_date_remove).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                if(taskNameInput.getText().toString().isEmpty()){
-                    Toast.makeText(requireContext(), "Please insert a name for this task", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                String taskName = taskNameInput.getText().toString();
-                String taskPriority = priorityChoiceSpinner.getSelectedItem().toString();
-                if(getArguments().getInt("taskArg") != -1){
-                    AddEditFragmentArgs args = AddEditFragmentArgs.fromBundle(getArguments());
-                    Task task = mTaskViewModel.getTask(args.getTaskArg());
+                datePickerDisplay.setText("");
+                mDatePicker = null ;
+            }
+        });
 
-                    task.setName(taskName);
-                    task.setPriority(PriorityConverter.fromStringToPriority(taskPriority));
-                    task.setDate(getDateFromPickers(mDatePicker,mTimePicker));
-                    mTaskViewModel.update(task);
-                }else{
-                    Task task = new Task(taskName,PriorityConverter.fromStringToPriority(taskPriority));
-                    task.setDate(getDateFromPickers(mDatePicker,mTimePicker));
+        view.findViewById(R.id.add_edit_fragment_task_time_remove).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                timePickerDisplay.setText("");
+                mTimePicker = null ;
+            }
+        });
+
+    }
+
+    private void saveItem(){
+        if(taskNameInput.getText().toString().isEmpty()){
+            Toast.makeText(requireContext(), "Please insert a name for this task", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String taskName = taskNameInput.getText().toString();
+        String taskPriority = priorityChoiceSpinner.getSelectedItem().toString();
+        if(getArguments().getInt("taskArg") != -1){
+            AddEditFragmentArgs args = AddEditFragmentArgs.fromBundle(getArguments());
+            Task task = mTaskViewModel.getTask(args.getTaskArg());
+
+            task.setName(taskName);
+            task.setPriority(PriorityConverter.fromStringToPriority(taskPriority));
+            task.setDate(getDateFromPickers(mDatePicker,mTimePicker));
+            mTaskViewModel.update(task);
+        }else{
+            Task task = new Task(taskName,PriorityConverter.fromStringToPriority(taskPriority));
+            task.setDate(getDateFromPickers(mDatePicker,mTimePicker));
 //                    Task task = new Task.TaskBuilder()
 //                            .setName(taskName)
 //                            .setPriority(PriorityConverter.fromStringToPriority(taskPriority))
 //                            .createTask();
-                    mTaskViewModel.insert(task);
-                }
-                hideKeyboard(view);
-                NavController navController = Navigation.findNavController(requireActivity(),R.id.nav_host_fragment);
-                navController.navigate(R.id.action_addEditFragment_to_homeFragment);
-            }
-        });
-
+            mTaskViewModel.insert(task);
+        }
+        hideKeyboard(getView());
+        NavController navController = Navigation.findNavController(requireActivity(),R.id.nav_host_fragment);
+        navController.navigate(R.id.action_addEditFragment_to_homeFragment);
     }
 
 
@@ -176,6 +195,7 @@ public class AddEditFragment extends Fragment {
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 datePickerDisplay.setText(dayOfMonth + "/" + (month+1) + "/" + year);
                 mDatePicker = view ;
+
             }
         },mYear,mMonth,mDay);
 
@@ -194,26 +214,57 @@ public class AddEditFragment extends Fragment {
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 timePickerDisplay.setText(hourOfDay + ":" + minute);
                 mTimePicker = view ;
+
             }
         },mHour,mMinute,true);
 
         timePickerDialog.show();
     }
 
-    private static Date getDateFromPickers(DatePicker datePicker,TimePicker timePicker){
+    @Override
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        Log.d(TAG, "onPrepareOptionsMenu: " + "from fragment?????");
+        menu.findItem(R.id.toolbar_menu_delete_all).setVisible(false);
+        menu.findItem(R.id.toolbar_menu_save_button).setVisible(true);
+    }
+
+    private Date getDateFromPickers(DatePicker datePicker, TimePicker timePicker){
         Calendar calendar = Calendar.getInstance();
-        int day = datePicker.getDayOfMonth();
-        int month = datePicker.getMonth();
-        int year = datePicker.getYear();
 
-        int hour = timePicker.getHour();
-        int minute = timePicker.getMinute();
+        int day;
+        int month;
+        int year;
+        int hour;
+        int minute;
 
-        calendar.set(year,month,day,hour,minute);
+        if(datePicker != null){
+             day = datePicker.getDayOfMonth();
+             month = datePicker.getMonth();
+             year = datePicker.getYear();
+
+             calendar.set(year,month,day);
+        }
+        if(timePicker != null){
+            hour = timePicker.getHour();
+            minute = timePicker.getMinute();
+            calendar.set(Calendar.HOUR_OF_DAY,hour);
+            calendar.set(Calendar.MINUTE,minute);
+        }
         return calendar.getTime();
     }
 
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Log.d(TAG, "onOptionsItemSelected: " + "???");
+        switch (item.getItemId()){
+            case R.id.toolbar_menu_save_button :
+                saveItem();
+                return true ;
+            default : return super.onOptionsItemSelected(item);
+
+        }
+    }
 
     private void hideKeyboard(View view){
         Context context = view.getContext();
@@ -221,7 +272,6 @@ public class AddEditFragment extends Fragment {
         assert imm != null;
         imm.hideSoftInputFromWindow(view.getWindowToken(),0);
     }
-
 
 
 }
