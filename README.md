@@ -8,3 +8,9 @@
 5. The user can use the voice control to quickly add a new item.
 6. The user can create categories of lists (and change their color). Every list has its own items (Every category represents a viewpager) 
 7. The user can navigate in any moment to the home page by pressing the "home" item from navigation drawer
+
+# What was used
+1. Room Database
+2. Recyclerview
+3. Navigation Drawer
+4. Snackbar
