@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item android:id="@+id/toolbar_menu_search_button"
+        android:title="search button"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        android:icon="@drawable/ic_baseline_search_24" />
+
+    <item
+        app:showAsAction="never"
+        android:id="@+id/toolbar_menu_delete_all"
+        android:title="Delete All"
+        android:visible="true"
+        android:orderInCategory="100"
+        />
+
+    <item app:showAsAction="always"
+        android:id="@+id/toolbar_menu_save_button"
+        android:icon="@drawable/ic_baseline_check_48"
+        android:iconTint="@android:color/holo_red_dark"
+        android:title="Save task"
+        android:visible="false"/>
+
+
+
+
+
+</menu>

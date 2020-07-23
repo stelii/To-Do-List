@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="4dp"
+    app:cardCornerRadius="6dp"
+    app:cardElevation="5dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <CheckBox
+            android:id="@+id/task_item_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:buttonTint="@android:color/holo_red_light"
+            android:checked="true" />
+
+        <TextView
+            android:id="@+id/task_item_name"
+            style="@style/TextAppearance.AppCompat.Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/task_item_checkbox"
+            android:layout_toEndOf="@id/task_item_checkbox"
+            android:fontFamily="@font/roboto"
+            android:paddingEnd="12dp"
+            android:text="to-do 1bbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+            android:layout_toStartOf="@id/task_item_priority_icon"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/task_item_due_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/task_item_name"
+            android:layout_alignStart="@id/task_item_name"
+            android:fontFamily="@font/roboto_mono_bold"
+            android:textColor="@color/date_color"
+            android:paddingBottom="12dp"/>
+
+        <ImageView
+            android:id="@+id/task_item_priority_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/arrow_red"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="12dp"
+            />
+
+    </RelativeLayout>
+
+
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="12dp"
+    tools:context=".fragments.AddEditFragment">
+
+    <EditText
+        android:id="@+id/add_edit_fragment_task_name_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:hint="Task Name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/add_edit_fragment_task_date_display"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="16dp"
+        android:hint="Due Date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_task_name_input" />
+
+    <ImageView
+        android:id="@+id/add_edit_fragment_task_date_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+
+        android:src="@drawable/baseline_event_black_18dp"
+        app:layout_constraintStart_toEndOf="@id/add_edit_fragment_task_date_display"
+        app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_task_name_input"
+        app:tint="@android:color/holo_blue_dark" />
+
+    <ImageView
+        android:id="@+id/add_edit_fragment_task_date_remove"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+
+        android:layout_marginTop="24dp"
+        android:src="@drawable/baseline_cancel_black_18dp"
+        app:layout_constraintStart_toEndOf="@id/add_edit_fragment_task_date_input"
+        app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_task_name_input"
+        app:tint="@android:color/holo_blue_dark" />
+
+    <EditText
+        android:id="@+id/add_edit_fragment_task_time_display"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="20dp"
+        android:hint="Time"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_task_date_display" />
+
+    <ImageView
+        android:id="@+id/add_edit_fragment_task_time_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="28dp"
+        android:src="@drawable/baseline_schedule_black_18dp"
+        android:tint="@android:color/holo_blue_dark"
+        app:layout_constraintStart_toEndOf="@id/add_edit_fragment_task_time_display"
+        app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_task_date_input" />
+
+
+    <ImageView
+        android:id="@+id/add_edit_fragment_task_time_remove"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+
+        android:layout_marginTop="28dp"
+        android:src="@drawable/baseline_cancel_black_18dp"
+        app:layout_constraintStart_toEndOf="@id/add_edit_fragment_task_time_input"
+        app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_task_date_remove"
+        app:tint="@android:color/holo_blue_dark" />
+
+    <TextView
+        android:id="@+id/add_edit_fragment_priority_choice_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+
+        android:layout_marginTop="28dp"
+        android:fontFamily="@font/bree_serif"
+        android:text="Priority"
+        android:textColor="@android:color/holo_red_light"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_task_time_display" />
+
+    <Spinner
+        android:id="@+id/add_edit_fragment_priority_choice_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_priority_choice_text" />
+
+    <!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+    <!--        android:id="@+id/add_edit_fragment_fab_button_add_task"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:src="@drawable/ic_baseline_check_48"-->
+
+    <!--        android:layout_marginTop="40dp"-->
+    <!--        app:backgroundTint="@color/fab_button_color"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_priority_choice_spinner"-->
+    <!--        app:tint="@android:color/white" />-->
+
+
+    <!-- TODO: Make parent layout be CoordinatorLayout and add features from it -->
+</androidx.constraintlayout.widget.ConstraintLayout>
