@@ -2,12 +2,15 @@ package my.projects.todolist.database;
 
 import android.app.Application;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Delete;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import static my.projects.todolist.database.TaskViewModel.TAG;
 
 public class TaskRepository {
     private TaskDao taskDao ;
@@ -41,6 +44,28 @@ public class TaskRepository {
             return getTaskAsyncTask.execute(id).get();
         } catch (ExecutionException | InterruptedException e) {
             return null ;
+        }
+    }
+
+    public LiveData<List<Task>> filter(String input){
+        Log.d(TAG, "filter: " + input);
+        try {
+            return new FilterTaskAsyncTask(taskDao).execute(input).get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            return null ;
+        }
+    }
+
+    private static class FilterTaskAsyncTask extends AsyncTask<String,Void,LiveData<List<Task>>>{
+        private TaskDao mTaskDao ;
+
+        public FilterTaskAsyncTask(TaskDao taskDao){
+            mTaskDao = taskDao;
+        }
+        @Override
+        protected LiveData<List<Task>> doInBackground(String... strings) {
+            return mTaskDao.filter(strings[0]);
         }
     }
 

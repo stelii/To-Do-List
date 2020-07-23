@@ -30,4 +30,7 @@ public interface TaskDao {
     @Query("DELETE FROM tasks_table")
     void deleteAll();
 
+    @Query("SELECT * FROM tasks_table WHERE LOWER(name) LIKE '%' || :search || '%'")
+    LiveData<List<Task>> filter(String search);
+
 }

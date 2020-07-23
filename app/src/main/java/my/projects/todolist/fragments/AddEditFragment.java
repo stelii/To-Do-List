@@ -55,7 +55,7 @@ public class AddEditFragment extends Fragment {
     private DatePicker mDatePicker ;
     private TimePicker mTimePicker ;
 
-    private FloatingActionButton addTaskFabButton ;
+//    private FloatingActionButton addTaskFabButton ;
     private TaskViewModel mTaskViewModel ;
 
     private Spinner priorityChoiceSpinner;
@@ -115,7 +115,7 @@ public class AddEditFragment extends Fragment {
                 setDatePickerDialog();
             }
         });
-        addTaskFabButton = view.findViewById(R.id.add_edit_fragment_fab_button_add_task);
+//        addTaskFabButton = view.findViewById(R.id.add_edit_fragment_fab_button_add_task);
         priorityChoiceSpinner = view.findViewById(R.id.add_edit_fragment_priority_choice_spinner);
 
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(requireContext(),R.array.priority_choices,android.R.layout.simple_spinner_item);
@@ -124,7 +124,6 @@ public class AddEditFragment extends Fragment {
 
         assert getArguments() != null;
         if(getArguments().getInt("taskArg") != -1){
-            Log.d(TAG, "onViewCreated: " + "ARGUMENTS: " + getArguments().toString());
             AddEditFragmentArgs args = AddEditFragmentArgs.fromBundle(getArguments());
             int idPassed = args.getTaskArg();
             Task task = mTaskViewModel.getTask(idPassed);
@@ -132,6 +131,7 @@ public class AddEditFragment extends Fragment {
             taskNameInput.setText(task.getName());
             priorityChoiceSpinner.setSelection(task.getPriority().getValue());
         }
+
 
 
 
@@ -177,9 +177,10 @@ public class AddEditFragment extends Fragment {
 //                            .createTask();
             mTaskViewModel.insert(task);
         }
-        hideKeyboard(getView());
         NavController navController = Navigation.findNavController(requireActivity(),R.id.nav_host_fragment);
         navController.navigate(R.id.action_addEditFragment_to_homeFragment);
+        hideKeyboard(getView());
+
     }
 
 
@@ -223,8 +224,8 @@ public class AddEditFragment extends Fragment {
 
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
-        Log.d(TAG, "onPrepareOptionsMenu: " + "from fragment?????");
         menu.findItem(R.id.toolbar_menu_delete_all).setVisible(false);
+        menu.findItem(R.id.toolbar_menu_search_button).setVisible(false);
         menu.findItem(R.id.toolbar_menu_save_button).setVisible(true);
     }
 
@@ -256,7 +257,6 @@ public class AddEditFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        Log.d(TAG, "onOptionsItemSelected: " + "???");
         switch (item.getItemId()){
             case R.id.toolbar_menu_save_button :
                 saveItem();
@@ -267,10 +267,11 @@ public class AddEditFragment extends Fragment {
     }
 
     private void hideKeyboard(View view){
-        Context context = view.getContext();
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        assert imm != null;
-        imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+        if(view != null){
+            InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            assert imm != null;
+            imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+        }
     }
 
 

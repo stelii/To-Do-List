@@ -3,13 +3,21 @@ package my.projects.todolist;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
+import android.app.SearchManager;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -19,11 +27,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.google.android.material.navigation.NavigationView;
 
 import my.projects.todolist.database.TaskViewModel;
+import my.projects.todolist.fragments.HomeFragment;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "Main activity";
@@ -34,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbar ;
 
+    private Fragment mFragmentToSet ;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,11 +56,47 @@ public class MainActivity extends AppCompatActivity {
 
 
         drawerLayout = findViewById(R.id.main_activity_drawer_layout);
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+                if(mFragmentToSet != null){
+                    navigateToHomeFragment();
+                    mFragmentToSet = null ;
+                }
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
         navView = findViewById(R.id.main_activity_nav_view);
 
         setUpToolbar();
 
         handleNavViewMenu();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent){
+        if(Intent.ACTION_SEARCH.equals(intent.getAction())){
+            String query = intent.getStringExtra(SearchManager.QUERY);
+        }
     }
 
     private void setUpToolbar() {
@@ -60,14 +109,6 @@ public class MainActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
     }
 
-//    public void switchToolbar(int layout){
-//        View v = getLayoutInflater().inflate(layout,null);
-//        toolbar.removeAllViews();
-//        toolbar.addView(v);
-//
-//
-//    }
-
     private void handleNavViewMenu() {
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -77,10 +118,13 @@ public class MainActivity extends AppCompatActivity {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                navigateToHomeFragment();
+                                drawerLayout.closeDrawer(navView);
                             }
-                        },260);
-                        drawerLayout.closeDrawer(navView);
+                        },200);
+
+                        navigateToHomeFragment();
+//                        mFragmentToSet = HomeFragment.newInstance();
+//                        drawerLayout.closeDrawer(navView);
                         return true;
                     default:
                         return false;
@@ -106,21 +150,34 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.toolbar_menu, menu);
-        return true;
+        Log.d(TAG, "onCreateOptionsMenu: " + "from activity???");
+
+        MenuItem menuItem = menu.findItem(R.id.toolbar_menu_search_button);
+        SearchView searchView = (SearchView)menuItem.getActionView();
+        searchView.setQueryHint("Search an item");
+
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+
+        NavHostFragment navHostFragment = (NavHostFragment)getSupportFragmentManager().getPrimaryNavigationFragment();
+        FragmentManager fragmentManager = navHostFragment.getChildFragmentManager();
+
+        Fragment fragment = fragmentManager.getPrimaryNavigationFragment();
+        if(fragment instanceof HomeFragment){
+            fragment.onPrepareOptionsMenu(menu);
+        }
+
+        return false;
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.toolbar_menu_save_button).setVisible(false);
-        invalidateOptionsMenu();
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    //    @Override
-//    protected void onRestart() {
-//        super.onRestart();
-//        Log.d(TAG, "onRestart: " + "??? ceva ???");
-//        drawerLayout.closeDrawer(navView);
+//    @Override
+//    public boolean onPrepareOptionsMenu(Menu menu) {
+////        menu.findItem(R.id.toolbar_menu_save_button).setVisible(false);
+//        invalidateOptionsMenu();
+//        return super.onPrepareOptionsMenu(menu);
 //    }
 
     @Override
@@ -129,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.toolbar_menu_delete_all:
                 taskViewModel.deleteAll();
                 return false;
+
             default:
                 return false;
         }

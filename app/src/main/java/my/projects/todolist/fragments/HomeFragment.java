@@ -1,5 +1,6 @@
 package my.projects.todolist.fragments;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
@@ -18,16 +20,21 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
@@ -76,6 +83,7 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
+        setHasOptionsMenu(true);
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
@@ -127,9 +135,13 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
         mTaskAdapter.setCheckboxListener(this);
         mTaskAdapter.setOnItemClickListener(this);
 
-        mTaskViewModel =
-                new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory
-                        .getInstance(getActivity().getApplication())).get(TaskViewModel.class);
+
+        mTaskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
+//        mTaskViewModel =
+//                new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory
+//                        .getInstance(getActivity().getApplication())).get(TaskViewModel.class);
+
+        mTaskViewModel.setFilter("");
 
         mTaskViewModel.getTasks().observe(getViewLifecycleOwner(), new Observer<List<Task>>() {
             @Override
@@ -226,47 +238,6 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
 
 
 
-
-
-//                mTaskViewModel.delete(taskDeleted);
-
-
-
-
-//                final int position = viewHolder.getAdapterPosition();
-//                final Task taskToDelete = mTaskAdapter.getItemAt(position);
-//                mTaskAdapter.removeAndNotifyItem(position);
-//
-//                final View parentView = getView();
-////                assert parentView != null;
-////                parentView.setTag(position);
-//
-//                Snackbar.make(parentView,"This is a snackbar", BaseTransientBottomBar.LENGTH_LONG)
-//                        .addCallback(new BaseTransientBottomBar.BaseCallback<Snackbar>() {
-//                            @Override
-//                            public void onDismissed(Snackbar snackbar, int event) {
-//                                super.onDismissed(snackbar,event);
-////                                int deletedPosition = (int) parentView.getTag();
-//
-//                                switch (event){
-//                                    case Snackbar.Callback.DISMISS_EVENT_ACTION :
-//                                        Log.d(TAG, "onDismissed: " + " se intampla ceva???");
-//
-//                                        mTaskAdapter.addAndNotifyItem(position,taskToDelete);
-//                                        break;
-//                                    default:
-//                                        mTaskViewModel.delete(taskToDelete);
-//                                        break;
-//                                }
-//                            }
-//
-//                        })
-//                        .setAction("UNDO", new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//
-//                            }
-//                        }).show();
             }
         };
 
@@ -284,6 +255,74 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
         mTaskViewModel.update(task);
         return task.isDone();
     }
+
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        Log.d(TAG, "onCreateOptionsMenu: " + "?>>>????");
+        super.onCreateOptionsMenu(menu,inflater);
+//        MenuItem menuItem = menu.findItem(R.id.toolbar_menu_search_button);
+//        SearchView searchView = (SearchView)menuItem.getActionView();
+//
+//        SearchManager searchManager =
+//                (SearchManager) requireActivity().getSystemService(Context.SEARCH_SERVICE);
+//
+//        searchView.setSearchableInfo(
+//                searchManager.getSearchableInfo(requireActivity().getComponentName()));
+//
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                mTaskAdapter.getFilter().filter(newText);
+//                return true;
+//            }
+//        });
+
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem menuItem = menu.findItem(R.id.toolbar_menu_search_button);
+        SearchView searchView = (SearchView)menuItem.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.d(TAG, "onQueryTextChange: " + ">???");
+                mTaskViewModel.setFilter(newText);
+//                mTaskViewModel.oMetoda();
+                return true;
+            }
+        });
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: " + "hello from start");
+    }
+
+    //    @Override
+//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//        switch (item.getItemId()){
+//            case R.id.toolbar_menu_search_button :
+//                return true ;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
     @Override
     public void onItemShortClick(Task task) {
