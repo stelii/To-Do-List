@@ -6,4 +6,8 @@
         android:icon="@drawable/ic_baseline_home_24"
         />
 
+    <item android:id="@+id/nav_view_menu_completed_tasks"
+        android:title="Completed tasks"
+        android:icon="@drawable/ic_baseline_check_circle_24"/>
+
 </menu>

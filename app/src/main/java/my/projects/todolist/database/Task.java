@@ -19,11 +19,14 @@ public class Task {
     private int id ;
 
     private String name ;
+
     private boolean done ;
     @Nullable
     private Date date ;
 
     private Priority priority ;
+
+    private String description ;
 
 //    public Task(TaskBuilder taskBuilder) {
 //        this.name = taskBuilder.name;
@@ -33,6 +36,14 @@ public class Task {
     public Task(String name, Priority priority) {
         this.name = name ;
         this.priority = priority;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getName() {

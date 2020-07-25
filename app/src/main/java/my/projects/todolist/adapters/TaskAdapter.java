@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.AsyncListDiffer;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,6 +26,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import my.projects.todolist.R;
 import my.projects.todolist.database.Task;
@@ -68,7 +71,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         //TODO : Add functionality to sort the list depending on priority ?? idk
     }
-
 
     @Override
     public int getItemCount() {
@@ -139,6 +141,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         private CheckBox mCheckBox;
         private ImageView mPriorityArrow ;
         private TextView mDueDate ;
+        private TextView mTaskDescription;
 
         private OnItemClickListener mOnItemClickListener;
 
@@ -151,6 +154,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             mCheckBox = itemView.findViewById(R.id.task_item_checkbox);
             mPriorityArrow = itemView.findViewById(R.id.task_item_priority_icon);
             mDueDate = itemView.findViewById(R.id.task_item_due_date);
+            mTaskDescription = itemView.findViewById(R.id.task_item_description);
 
             mCheckBox.setOnClickListener(new View.OnClickListener(){
                 @Override
@@ -174,7 +178,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
 
             Date date = task.getDate();
-            if(date != null)  mDueDate.setText(getDateAsString(date));
+            if(task.isDone()) {
+                mDueDate.setVisibility(View.VISIBLE);
+                mTaskDescription.setVisibility(View.INVISIBLE);
+            }else{
+                mTaskDescription.setText(task.getDescription());
+            }
+
         }
 
         private String getDateAsString(Date date){
@@ -186,8 +196,27 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             Task task = getItemAt(position);
 
             boolean taskStatus = mcheckboxListener.changeItemStatus(task);
-            if (taskStatus) mTaskName.setPaintFlags(mTaskName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            else mTaskName.setPaintFlags(mTaskName.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+            if (taskStatus){
+                mTaskName.setPaintFlags(mTaskName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                mTaskDescription.setVisibility(View.GONE);
+
+//                Calendar calendar = Calendar.getInstance();
+//                int currentHour24Format = calendar.get(Calendar.HOUR_OF_DAY);
+//                int currentMinute = calendar.get(Calendar.MINUTE);
+
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+                String hour = simpleDateFormat.format(new Date());
+
+                mDueDate.setText("Done at " + hour);
+                mDueDate.setVisibility(View.VISIBLE);
+            }
+            else {
+                mTaskName.setPaintFlags(mTaskName.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+                mTaskDescription.setText(task.getDescription());
+                mTaskDescription.setVisibility(View.VISIBLE);
+                mDueDate.setVisibility(View.INVISIBLE);
+
+            }
         }
 
         @Override

@@ -17,6 +17,11 @@
             app:exitAnim="@anim/fragment_close_exit"
             app:popEnterAnim="@anim/fragment_open_enter"
             app:popExitAnim="@anim/fragment_close_exit" />
+
+
+        <action
+            android:id="@+id/action_homeFragment_to_completedTasksFragment"
+            app:destination="@id/completedTasksFragment" />
     </fragment>
 
     <fragment
@@ -39,5 +44,12 @@
             app:argType="integer"
             android:defaultValue="-1" />
     </fragment>
+
+
+    <fragment
+        android:id="@+id/completedTasksFragment"
+        android:name="my.projects.todolist.fragments.CompletedTasksFragment"
+        android:label="fragment_completed_tasks"
+        tools:layout="@layout/fragment_completed_tasks" />
 
 </navigation>

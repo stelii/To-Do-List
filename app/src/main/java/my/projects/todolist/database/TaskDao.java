@@ -27,6 +27,9 @@ public interface TaskDao {
     @Query("SELECT * FROM tasks_table WHERE id = :id")
     Task getTask(int id);
 
+    @Query("SELECT * FROM tasks_table WHERE done == 1")
+    LiveData<List<Task>> getCompletedTasks();
+
     @Query("DELETE FROM tasks_table")
     void deleteAll();
 

@@ -123,9 +123,17 @@ public class MainActivity extends AppCompatActivity {
                         },200);
 
                         navigateToHomeFragment();
-//                        mFragmentToSet = HomeFragment.newInstance();
-//                        drawerLayout.closeDrawer(navView);
                         return true;
+
+                    case R.id.nav_view_menu_completed_tasks :
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                drawerLayout.closeDrawer(navView);
+                            }
+                        },200);
+                            navigateToFragment(R.id.action_homeFragment_to_completedTasksFragment);
+                            return true ;
                     default:
                         return false;
                 }
@@ -138,6 +146,11 @@ public class MainActivity extends AppCompatActivity {
     private void navigateToHomeFragment() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         navController.popBackStack(R.id.homeFragment, false);
+    }
+
+    private void navigateToFragment(int actionId){
+        NavController navController = Navigation.findNavController(this,R.id.nav_host_fragment);
+        navController.navigate(actionId);
     }
 
     @Override

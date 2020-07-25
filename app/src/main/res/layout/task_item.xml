@@ -25,11 +25,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/task_item_checkbox"
+            android:layout_toStartOf="@id/task_item_priority_icon"
             android:layout_toEndOf="@id/task_item_checkbox"
-            android:fontFamily="@font/roboto"
+            android:fontFamily="sans-serif-medium"
             android:paddingEnd="12dp"
             android:text="to-do 1bbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-            android:layout_toStartOf="@id/task_item_priority_icon"
             android:textColor="@android:color/black" />
 
         <TextView
@@ -38,9 +38,20 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/task_item_name"
             android:layout_alignStart="@id/task_item_name"
-            android:fontFamily="@font/roboto_mono_bold"
-            android:textColor="@color/date_color"
-            android:paddingBottom="12dp"/>
+            android:fontFamily="@font/roboto_condensed_bold"
+            android:paddingBottom="12dp"
+            android:textColor="#800000"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/task_item_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/task_item_name"
+            android:layout_alignStart="@id/task_item_name"
+            android:fontFamily="sans-serif"
+            android:paddingBottom="12dp"
+            android:textColor="@color/date_color" />
 
         <ImageView
             android:id="@+id/task_item_priority_icon"

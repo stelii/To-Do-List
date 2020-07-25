@@ -119,7 +119,7 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
         mQuickAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String taskName = mQuickTaskName.getText().toString();
+                String taskName = mQuickTaskName.getText().toString().trim();
                 mTaskViewModel.insert(new Task(taskName, PriorityConverter.fromStringToPriority("Low")));
                 mQuickTaskName.setText("");
                 hideKeyboard(v);
