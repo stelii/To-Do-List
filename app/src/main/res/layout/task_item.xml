@@ -49,6 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/task_item_name"
             android:layout_alignStart="@id/task_item_name"
+            android:layout_toStartOf="@id/task_item_priority_icon"
             android:fontFamily="sans-serif"
             android:paddingBottom="12dp"
             android:textColor="@color/date_color" />

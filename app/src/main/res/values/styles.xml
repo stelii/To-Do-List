@@ -7,11 +7,18 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="MyTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="MyTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:statusBarColor">@android:color/white</item>
+<!--        <item name="colorControlNormal">@android:color/white</item>-->
+    </style>
+
+    <style name="MyThemeOverlay_Toolbar" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary">
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="colorPrimary">@android:color/white</item>
+        <item name="colorOnPrimary">@android:color/white</item>
     </style>
 
 </resources>
