@@ -10,7 +10,7 @@ import androidx.room.TypeConverters;
 import my.projects.todolist.database.converters.DateConverter;
 import my.projects.todolist.database.converters.PriorityConverter;
 
-@Database(entities = {Task.class}, version = 1, exportSchema = false)
+@Database(entities = {Task.class,TasksList.class}, version = 1, exportSchema = false)
 @TypeConverters({DateConverter.class,PriorityConverter.class})
 public abstract class TaskRoomDatabase extends RoomDatabase{
 

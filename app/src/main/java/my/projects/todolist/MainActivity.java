@@ -34,6 +34,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import my.projects.todolist.database.TaskViewModel;
 import my.projects.todolist.fragments.HomeFragment;
+import my.projects.todolist.fragments.ListNameDialogFragment;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "Main activity";
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        taskViewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(TaskViewModel.class);
+        taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
 
 
         drawerLayout = findViewById(R.id.main_activity_drawer_layout);
@@ -101,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setUpToolbar() {
         toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("");
+//        toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_navigation_drawer, R.string.close_navigation_drawer);
@@ -134,6 +135,20 @@ public class MainActivity extends AppCompatActivity {
                         },200);
                             navigateToFragment(R.id.action_homeFragment_to_completedTasksFragment);
                             return true ;
+
+
+                    case R.id.nav_view_menu_add_new_list :
+                        //citesc numele listei dintr-un dialogFragment
+                        navigateToDialogFragment();
+//                        NavHostFragment navHostFragment = (NavHostFragment)getSupportFragmentManager().getPrimaryNavigationFragment();
+//                        FragmentManager fragmentManager = navHostFragment.getChildFragmentManager();
+//
+//                        Fragment fragment = fragmentManager.getPrimaryNavigationFragment();
+//
+//                        if(fragment instanceof HomeFragment){
+//                            ((HomeFragment) fragment).displayDialogFragment();
+//                        }
+                        return true ;
                     default:
                         return false;
                 }
@@ -141,7 +156,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
+    private void navigateToDialogFragment(){
+        ListNameDialogFragment newListDialog = new ListNameDialogFragment();
+        newListDialog.show(getSupportFragmentManager(),"new_list_dialog");
+    }
 
     private void navigateToHomeFragment() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);

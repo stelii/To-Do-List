@@ -22,7 +22,21 @@
         <action
             android:id="@+id/action_homeFragment_to_completedTasksFragment"
             app:destination="@id/completedTasksFragment" />
+
     </fragment>
+
+    <dialog
+        android:id="@+id/listname_dialog"
+        android:name="my.projects.todolist.fragments.ListNameDialogFragment"
+        tools:layout="@layout/fragment_list_name_dialog">
+        <argument
+            android:name="nameArg"
+            app:argType="string"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_listname_dialog_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </dialog>
 
     <fragment
         android:id="@+id/addEditFragment"
@@ -51,5 +65,10 @@
         android:name="my.projects.todolist.fragments.CompletedTasksFragment"
         android:label="fragment_completed_tasks"
         tools:layout="@layout/fragment_completed_tasks" />
+    <fragment
+        android:id="@+id/listNameDialogFragment2"
+        android:name="my.projects.todolist.fragments.ListNameDialogFragment"
+        android:label="fragment_list_name_dialog"
+        tools:layout="@layout/fragment_list_name_dialog" />
 
 </navigation>

@@ -10,30 +10,40 @@ import androidx.room.Update;
 import java.util.List;
 
 @Dao()
-public interface TaskDao {
+public abstract class TaskDao {
 
     @Insert
-    void insert(Task task);
+    abstract void insert(Task task);
 
     @Query("SELECT * FROM tasks_table")
-    LiveData<List<Task>> getTasks();
+    abstract LiveData<List<Task>> getTasks();
 
     @Delete
-    void delete(Task task);
+    abstract void delete(Task task);
 
     @Update
-    void update(Task task);
+    abstract void update(Task task);
 
     @Query("SELECT * FROM tasks_table WHERE id = :id")
-    Task getTask(int id);
+    abstract Task getTask(int id);
 
     @Query("SELECT * FROM tasks_table WHERE done == 1")
-    LiveData<List<Task>> getCompletedTasks();
+    abstract LiveData<List<Task>> getCompletedTasks();
 
     @Query("DELETE FROM tasks_table")
-    void deleteAll();
+    abstract void deleteAll();
 
     @Query("SELECT * FROM tasks_table WHERE LOWER(name) LIKE '%' || :search || '%'")
-    LiveData<List<Task>> filter(String search);
+    abstract LiveData<List<Task>> filter(String search);
+
+    @Insert
+    abstract long insertList(TasksList tasksList);
+
+    @Query("SELECT * FROM taskslist_table WHERE id = :id")
+    abstract TasksList getList(long id);
+
+
+
+
 
 }

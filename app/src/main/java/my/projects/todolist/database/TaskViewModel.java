@@ -17,9 +17,18 @@ public class TaskViewModel extends AndroidViewModel {
     private TaskRepository mRepository ;
     public static final String TAG = "TaskViewModel";
 
-
-
     private MutableLiveData<String> mFilterText = new MutableLiveData<>();
+
+    private MutableLiveData<String> mListName = new MutableLiveData<>();
+
+    public void setListName(String name){
+        mListName.setValue(name);
+    }
+
+    public LiveData<String> getListName(){
+        return mListName;
+    }
+
 
 
     public TaskViewModel(@NonNull Application application) {
@@ -79,5 +88,13 @@ public class TaskViewModel extends AndroidViewModel {
 
     public void deleteAll(){
         mRepository.deleteAll();
+    }
+
+    public long insertList(TasksList tasksList){
+       return  mRepository.insertList(tasksList);
+    }
+
+    public TasksList getList(long id){
+        return mRepository.getList(id);
     }
 }

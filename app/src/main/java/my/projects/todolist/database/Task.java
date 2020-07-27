@@ -2,6 +2,7 @@ package my.projects.todolist.database;
 
 import androidx.annotation.Nullable;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverter;
 import androidx.room.TypeConverters;
@@ -12,11 +13,28 @@ import my.projects.todolist.database.converters.DateConverter;
 import my.projects.todolist.database.converters.PriorityConverter;
 import my.projects.todolist.models.Priority;
 
+import static androidx.room.ForeignKey.CASCADE;
+
 @Entity(tableName = "tasks_table")
+@ForeignKey(entity = TasksList.class,
+        parentColumns = "id",
+        childColumns = "listId",
+        onDelete = CASCADE,
+        onUpdate = CASCADE)
 public class Task {
 
     @PrimaryKey(autoGenerate = true)
     private int id ;
+
+    private int listId ;
+
+    public int getListId() {
+        return listId;
+    }
+
+    public void setListId(int listId) {
+        this.listId = listId;
+    }
 
     private String name ;
 

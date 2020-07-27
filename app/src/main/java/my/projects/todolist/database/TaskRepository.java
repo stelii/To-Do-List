@@ -77,6 +77,32 @@ public class TaskRepository {
         new DeleteAllAsyncTask(taskDao).execute();
     }
 
+    public TasksList getList(long id){
+       GetListAsyncTask getListAsyncTask = new GetListAsyncTask(taskDao);
+        try {
+            return getListAsyncTask.execute(id).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return null ;
+    }
+
+    public long insertList(TasksList tasksList){
+        InsertListAsyncTask insertListAsyncTask = new InsertListAsyncTask(taskDao);
+
+        try {
+            return insertListAsyncTask.execute(tasksList).get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    //TODO : Am reusit sa introduc lista in baza de date, iar acum trebuie sa fac cu ViewPager pentru fiecare lista (prima data sa incerc sa introduc elemente in fiecare lista
+    //TODO : si sa le afisez
 
 
     private static class InsertAsyncTask extends AsyncTask<Task,Void,Void>{
@@ -144,6 +170,33 @@ public class TaskRepository {
         protected Void doInBackground(Void... voids) {
             taskDao.deleteAll();
             return null;
+        }
+    }
+
+
+    private static class InsertListAsyncTask extends AsyncTask<TasksList,Void,Long>{
+        private TaskDao taskDao ;
+
+        public InsertListAsyncTask(TaskDao taskDao){
+            this.taskDao = taskDao;
+        }
+
+        @Override
+        protected Long doInBackground(TasksList... tasksLists) {
+            return taskDao.insertList(tasksLists[0]);
+        }
+    }
+
+    private static class GetListAsyncTask extends AsyncTask<Long,Void,TasksList>{
+        private TaskDao taskDao ;
+
+        public GetListAsyncTask(TaskDao taskDao){
+            this.taskDao = taskDao;
+        }
+
+        @Override
+        protected TasksList doInBackground(Long... longs) {
+            return taskDao.getList(longs[0]);
         }
     }
 

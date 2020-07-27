@@ -47,6 +47,7 @@ import my.projects.todolist.R;
 import my.projects.todolist.adapters.TaskAdapter;
 import my.projects.todolist.database.Task;
 import my.projects.todolist.database.TaskViewModel;
+import my.projects.todolist.database.TasksList;
 import my.projects.todolist.database.converters.PriorityConverter;
 import my.projects.todolist.models.Priority;
 
@@ -136,7 +137,7 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
         mTaskAdapter.setOnItemClickListener(this);
 
 
-        mTaskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
+        mTaskViewModel = new ViewModelProvider(getActivity()).get(TaskViewModel.class);
 //        mTaskViewModel =
 //                new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory
 //                        .getInstance(getActivity().getApplication())).get(TaskViewModel.class);
@@ -147,6 +148,16 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
             @Override
             public void onChanged(List<Task> tasks) {
                 mTaskAdapter.submitList(tasks);
+            }
+        });
+
+        mTaskViewModel.getListName().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                Log.d(TAG, "onChanged: " + "ceva ceva boss");
+                long listId = mTaskViewModel.insertList(new TasksList(s));
+                TasksList list = mTaskViewModel.getList(listId);
+                Toast.makeText(requireContext(), list.getName(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -161,6 +172,11 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
 
         enableSwipeToDeleteAndUndo(mTaskList);
 
+    }
+
+    public void displayDialogFragment(){
+        ListNameDialogFragment newListDialog = new ListNameDialogFragment();
+        newListDialog.show(getChildFragmentManager(),"new_list_dialog");
     }
 
     private static void hideKeyboard(View view){
