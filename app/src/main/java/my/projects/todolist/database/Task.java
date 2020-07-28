@@ -26,13 +26,13 @@ public class Task {
     @PrimaryKey(autoGenerate = true)
     private int id ;
 
-    private int listId ;
+    private long listId ;
 
-    public int getListId() {
+    public long getListId() {
         return listId;
     }
 
-    public void setListId(int listId) {
+    public void setListId(long listId) {
         this.listId = listId;
     }
 

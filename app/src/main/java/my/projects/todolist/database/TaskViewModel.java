@@ -17,9 +17,21 @@ public class TaskViewModel extends AndroidViewModel {
     private TaskRepository mRepository ;
     public static final String TAG = "TaskViewModel";
 
+    private LiveData<List<Task>> tasksFromList ;
+
     private MutableLiveData<String> mFilterText = new MutableLiveData<>();
 
     private MutableLiveData<String> mListName = new MutableLiveData<>();
+
+    private MutableLiveData<TasksList> currentList = new MutableLiveData<>();
+
+    public void setCurrentList(TasksList list){
+        currentList.setValue(list);
+    }
+
+    public LiveData<TasksList> getCurrentList(){
+        return currentList;
+    }
 
     public void setListName(String name){
         mListName.setValue(name);
@@ -34,16 +46,26 @@ public class TaskViewModel extends AndroidViewModel {
     public TaskViewModel(@NonNull Application application) {
         super(application);
         mRepository = new TaskRepository(application);
-        tasks = Transformations.switchMap(mFilterText, new Function<String, LiveData<List<Task>>>() {
-            @Override
-            public LiveData<List<Task>> apply(String input) {
-                if(input == null || input.isEmpty()){
-                    Log.d(TAG, "apply: " + "?!!!");
-                    return mRepository.getTasks();
+
+            tasksFromList = Transformations.switchMap(mFilterText, new Function<String, LiveData<List<Task>>>() {
+                @Override
+                public LiveData<List<Task>> apply(String input) {
+                    if(input == null || input.isEmpty()){
+                        Log.d(TAG, "apply: " + "?!!!");
+                        return mRepository.getTasksFromList(currentList.getValue().getId());
+                    }
+                    Log.d(TAG, "apply: " + currentList.getValue().getId());
+                    return mRepository.filter(currentList.getValue().getId(),input);
                 }
-                return mRepository.filter(input);
-            }
-        });
+            });
+
+            tasksFromList = Transformations.switchMap(currentList, new Function<TasksList, LiveData<List<Task>>>() {
+                @Override
+                public LiveData<List<Task>> apply(TasksList input) {
+                    return mRepository.getTasksFromList(input.getId());
+                }
+            });
+
     }
 
     public void setFilter(String query){
@@ -68,6 +90,10 @@ public class TaskViewModel extends AndroidViewModel {
 
     public LiveData<List<Task>> getTasks(){
         return tasks;
+    }
+
+    public LiveData<List<TasksList>> getAllLists(){
+        return mRepository.getAllLists();
     }
 
     public LiveData<List<Task>> getCompletedTasks(){
@@ -96,5 +122,13 @@ public class TaskViewModel extends AndroidViewModel {
 
     public TasksList getList(long id){
         return mRepository.getList(id);
+    }
+
+    public LiveData<List<Task>> getTasksFromList(long id){
+        return tasksFromList;
+    }
+
+    public void insertTaskToList(TasksList tasksList, Task task){
+        mRepository.insertTaskToList(tasksList,task);
     }
 }

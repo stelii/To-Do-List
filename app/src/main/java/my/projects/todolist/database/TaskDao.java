@@ -5,6 +5,7 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Transaction;
 import androidx.room.Update;
 
 import java.util.List;
@@ -33,8 +34,8 @@ public abstract class TaskDao {
     @Query("DELETE FROM tasks_table")
     abstract void deleteAll();
 
-    @Query("SELECT * FROM tasks_table WHERE LOWER(name) LIKE '%' || :search || '%'")
-    abstract LiveData<List<Task>> filter(String search);
+    @Query("SELECT * FROM tasks_table WHERE LOWER(name) LIKE '%' || :search || '%' AND listId = :listId")
+    abstract LiveData<List<Task>> filter(long listId ,String search);
 
     @Insert
     abstract long insertList(TasksList tasksList);
@@ -42,7 +43,20 @@ public abstract class TaskDao {
     @Query("SELECT * FROM taskslist_table WHERE id = :id")
     abstract TasksList getList(long id);
 
+    @Query("SELECT * FROM taskslist_table")
+    abstract LiveData<List<TasksList>> getAllLists();
 
+    @Delete
+    abstract void deleteList(TasksList tasksList);
+
+    @Query("SELECT * FROM tasks_table WHERE listId = :listId")
+    abstract LiveData<List<Task>> getTasksFromList(long listId);
+
+    @Transaction
+    public void insertTaskToList(TasksList tasksList,Task task){
+        task.setListId(tasksList.getId());
+        insert(task);
+    }
 
 
 

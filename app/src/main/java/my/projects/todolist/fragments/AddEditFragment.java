@@ -98,8 +98,7 @@ public class AddEditFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        mTaskViewModel = new ViewModelProvider(this,
-                ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication())).get(TaskViewModel.class);
+        mTaskViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
 
         taskNameInput = view.findViewById(R.id.add_edit_fragment_task_name_input);
         datePicker = view.findViewById(R.id.add_edit_fragment_task_date_input);

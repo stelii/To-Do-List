@@ -37,8 +37,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     private OnCheckboxListener mcheckboxListener ;
     private OnItemClickListener mOnItemClickListener;
 
-    private List<Task> taskListFiltered ;
-
     private AsyncListDiffer<Task> mDiffer = new AsyncListDiffer<Task>(this,DIFF_CALLBACK);
 
 

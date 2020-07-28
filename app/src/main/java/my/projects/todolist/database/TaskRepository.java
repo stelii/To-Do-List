@@ -30,8 +30,16 @@ public class TaskRepository {
         return tasks;
     }
 
+    public LiveData<List<TasksList>> getAllLists(){
+        return taskDao.getAllLists();
+    }
+
     public LiveData<List<Task>> getCompletedTasks(){
         return taskDao.getCompletedTasks();
+    }
+
+    public void insertTaskToList(TasksList tasksList,Task task){
+        new InsertTaskInList(taskDao,task,tasksList).execute();
     }
 
     public void delete(Task task){
@@ -51,10 +59,21 @@ public class TaskRepository {
         }
     }
 
-    public LiveData<List<Task>> filter(String input){
+    public LiveData<List<Task>> filter(long listId ,String input){
         Log.d(TAG, "filter: " + input);
         try {
-            return new FilterTaskAsyncTask(taskDao).execute(input).get();
+            return new FilterTaskAsyncTask(listId,taskDao).execute(input).get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            return null ;
+        }
+    }
+
+    public LiveData<List<Task>> getTasksFromList(long id){
+        GetTasksFromListAsyncTask getTasksFromListAsyncTask = new GetTasksFromListAsyncTask(taskDao);
+
+        try {
+            return getTasksFromListAsyncTask.execute(id).get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
             return null ;
@@ -63,13 +82,15 @@ public class TaskRepository {
 
     private static class FilterTaskAsyncTask extends AsyncTask<String,Void,LiveData<List<Task>>>{
         private TaskDao mTaskDao ;
+        private long listId ;
 
-        public FilterTaskAsyncTask(TaskDao taskDao){
+        public FilterTaskAsyncTask(long listId,TaskDao taskDao){
             mTaskDao = taskDao;
+            this.listId = listId;
         }
         @Override
         protected LiveData<List<Task>> doInBackground(String... strings) {
-            return mTaskDao.filter(strings[0]);
+            return mTaskDao.filter(listId,strings[0]);
         }
     }
 
@@ -200,5 +221,35 @@ public class TaskRepository {
         }
     }
 
+    private static class GetTasksFromListAsyncTask extends AsyncTask<Long,Void,LiveData<List<Task>>>{
+        private TaskDao taskDao ;
 
+        public GetTasksFromListAsyncTask(TaskDao taskDao){
+            this.taskDao = taskDao;
+        }
+
+
+        @Override
+        protected LiveData<List<Task>> doInBackground(Long... longs) {
+            return taskDao.getTasksFromList(longs[0]);
+        }
+    }
+
+    private static class InsertTaskInList extends AsyncTask<Void,Void,Void>{
+        private TaskDao taskDao;
+        private Task task ;
+        private TasksList tasksList ;
+
+        public InsertTaskInList(TaskDao taskDao, Task task, TasksList tasksList) {
+            this.taskDao = taskDao;
+            this.task = task;
+            this.tasksList = tasksList;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            taskDao.insertTaskToList(tasksList,task);
+            return null ;
+        }
+    }
 }

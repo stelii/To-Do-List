@@ -9,6 +9,7 @@ import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
@@ -32,9 +33,14 @@ import android.widget.ToggleButton;
 
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.List;
+
 import my.projects.todolist.database.TaskViewModel;
+import my.projects.todolist.database.TasksList;
 import my.projects.todolist.fragments.HomeFragment;
 import my.projects.todolist.fragments.ListNameDialogFragment;
+
+import static android.content.ContentValues.TAG;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "Main activity";
@@ -86,6 +92,16 @@ public class MainActivity extends AppCompatActivity {
         setUpToolbar();
 
         handleNavViewMenu();
+
+        setUpNavViewItems();
+
+        taskViewModel.getListName().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                Log.d(TAG, "onChanged: " + "ceva ceva boss");
+                taskViewModel.insertList(new TasksList(s));
+            }
+        });
     }
 
     @Override
@@ -108,6 +124,46 @@ public class MainActivity extends AppCompatActivity {
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_navigation_drawer, R.string.close_navigation_drawer);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
+    }
+
+    private void setUpNavViewItems(){
+        taskViewModel.getAllLists().observe(this, new Observer<List<TasksList>>() {
+            @Override
+            public void onChanged(List<TasksList> tasksLists) {
+                for(TasksList t : tasksLists){
+                    addMenuItemsNavMenuDrawer(t);
+                }
+            }
+        });
+    }
+
+
+    //TODO : sterge din lista , actualizeaza din lista
+    //TODO : adauga,sterge,actualizeaza din pagina de adaugare/editare
+    //TODO : cand se intra in aplicatie, daca exista vreo lista creata, acea lista va fii afisata
+    private void addMenuItemsNavMenuDrawer(final TasksList list){
+        Menu menu = navView.getMenu();
+        if(menu.findItem(list.getId()) == null){
+            MenuItem menuItem = menu.add(R.id.nav_view_group_lists,list.getId(),5,list.getName());
+            menuItem.setIcon(R.drawable.ic_round_format_list_bulleted_24);
+            menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            drawerLayout.closeDrawer(navView);
+                        }
+                    },200);
+                    //navigateToHomeFragment();
+                    long listId = item.getItemId();
+                    TasksList currentList = taskViewModel.getList(listId);
+                    taskViewModel.setCurrentList(currentList);
+                    toolbar.setTitle(currentList.getName());
+                    return true ;
+                }
+            });
+        }
     }
 
     private void handleNavViewMenu() {
@@ -149,12 +205,15 @@ public class MainActivity extends AppCompatActivity {
 //                            ((HomeFragment) fragment).displayDialogFragment();
 //                        }
                         return true ;
+
                     default:
                         return false;
                 }
             }
         });
     }
+
+
 
     private void navigateToDialogFragment(){
         ListNameDialogFragment newListDialog = new ListNameDialogFragment();

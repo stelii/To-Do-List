@@ -121,8 +121,13 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
             @Override
             public void onClick(View v) {
                 String taskName = mQuickTaskName.getText().toString().trim();
-                mTaskViewModel.insert(new Task(taskName, PriorityConverter.fromStringToPriority("Low")));
+                Task task = new Task(taskName,PriorityConverter.fromStringToPriority("Low"));
+
+                TasksList tasksList = mTaskViewModel.getCurrentList().getValue();
+                mTaskViewModel.insertTaskToList(tasksList,task);
                 mQuickTaskName.setText("");
+
+                //                mTaskViewModel.insert(new Task(taskName, PriorityConverter.fromStringToPriority("Low")));
                 hideKeyboard(v);
 
             }
@@ -137,17 +142,30 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
         mTaskAdapter.setOnItemClickListener(this);
 
 
-        mTaskViewModel = new ViewModelProvider(getActivity()).get(TaskViewModel.class);
+        mTaskViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
 //        mTaskViewModel =
 //                new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory
 //                        .getInstance(getActivity().getApplication())).get(TaskViewModel.class);
 
         mTaskViewModel.setFilter("");
 
-        mTaskViewModel.getTasks().observe(getViewLifecycleOwner(), new Observer<List<Task>>() {
+//        mTaskViewModel.getTasks().observe(getViewLifecycleOwner(), new Observer<List<Task>>() {
+//            @Override
+//            public void onChanged(List<Task> tasks) {
+//                mTaskAdapter.submitList(tasks);
+//            }
+//        });
+
+        mTaskViewModel.getCurrentList().observe(getViewLifecycleOwner(), new Observer<TasksList>() {
             @Override
-            public void onChanged(List<Task> tasks) {
-                mTaskAdapter.submitList(tasks);
+            public void onChanged(TasksList tasksList) {
+                Log.d(TAG, "onChanged: " + "the list has changed -> name here: " + tasksList.getName());
+                mTaskViewModel.getTasksFromList(tasksList.getId()).observe(getViewLifecycleOwner(), new Observer<List<Task>>() {
+                    @Override
+                    public void onChanged(List<Task> tasks) {
+                        mTaskAdapter.submitList(tasks);
+                    }
+                });
             }
         });
 
@@ -157,7 +175,8 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
                 Log.d(TAG, "onChanged: " + "ceva ceva boss");
                 long listId = mTaskViewModel.insertList(new TasksList(s));
                 TasksList list = mTaskViewModel.getList(listId);
-                Toast.makeText(requireContext(), list.getName(), Toast.LENGTH_SHORT).show();
+                mTaskViewModel.setCurrentList(list);
+                Toast.makeText(requireContext(), list.getId() + "", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -172,11 +191,6 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
 
         enableSwipeToDeleteAndUndo(mTaskList);
 
-    }
-
-    public void displayDialogFragment(){
-        ListNameDialogFragment newListDialog = new ListNameDialogFragment();
-        newListDialog.show(getChildFragmentManager(),"new_list_dialog");
     }
 
     private static void hideKeyboard(View view){
