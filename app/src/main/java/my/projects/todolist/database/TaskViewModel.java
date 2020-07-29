@@ -29,7 +29,7 @@ public class TaskViewModel extends AndroidViewModel {
         currentList.setValue(list);
     }
 
-    public LiveData<TasksList> getCurrentList(){
+    public MutableLiveData<TasksList> getCurrentList(){
         return currentList;
     }
 
@@ -51,10 +51,8 @@ public class TaskViewModel extends AndroidViewModel {
                 @Override
                 public LiveData<List<Task>> apply(String input) {
                     if(input == null || input.isEmpty()){
-                        Log.d(TAG, "apply: " + "?!!!");
-                        return mRepository.getTasksFromList(currentList.getValue().getId());
+                            return mRepository.getTasksFromList(currentList.getValue().getId());
                     }
-                    Log.d(TAG, "apply: " + currentList.getValue().getId());
                     return mRepository.filter(currentList.getValue().getId(),input);
                 }
             });
@@ -66,22 +64,22 @@ public class TaskViewModel extends AndroidViewModel {
                 }
             });
 
+//            currentList = Transformations.switchMap(mListName, new Function<String, LiveData<TasksList>>() {
+//                @Override
+//                public LiveData<TasksList> apply(String input) {
+//                    TasksList newList = new TasksList(input);
+//                    long id = mRepository.insertList(newList);
+//                    return mRepository.getList()
+//                }
+//            });
+
     }
 
     public void setFilter(String query){
         Log.d(TAG, "setFilter: " + query);
         mFilterText.setValue(query);
-//        tasks = Transformations.switchMap(mFilterText, new Function<String, LiveData<List<Task>>>() {
-//            @Override
-//            public LiveData<List<Task>> apply(String input) {
-//                if(input == null || input.isEmpty()){
-//                    Log.d(TAG, "apply: " + "?!!!");
-//                    return mRepository.getTasks();
-//                }
-//                return mRepository.filter(input);
-//            }
-//        });
     }
+
 
 
     public void insert(Task task){
@@ -117,14 +115,14 @@ public class TaskViewModel extends AndroidViewModel {
     }
 
     public long insertList(TasksList tasksList){
-       return  mRepository.insertList(tasksList);
+       return mRepository.insertList(tasksList);
     }
 
     public TasksList getList(long id){
         return mRepository.getList(id);
     }
 
-    public LiveData<List<Task>> getTasksFromList(long id){
+    public LiveData<List<Task>> getTasksFromList(){
         return tasksFromList;
     }
 

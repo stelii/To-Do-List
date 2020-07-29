@@ -34,7 +34,7 @@ public abstract class TaskDao {
     @Query("DELETE FROM tasks_table")
     abstract void deleteAll();
 
-    @Query("SELECT * FROM tasks_table WHERE LOWER(name) LIKE '%' || :search || '%' AND listId = :listId")
+    @Query("SELECT * FROM tasks_table WHERE LOWER(name) LIKE '%' || :search || '%' AND listId == :listId")
     abstract LiveData<List<Task>> filter(long listId ,String search);
 
     @Insert

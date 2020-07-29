@@ -7,10 +7,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="MyTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
+    <style name="MyTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowTranslucentStatus">true</item>
+<!--        <item name="android:activatedBackgroundIndicator">@drawable/drawer_list_selector</item>-->
 <!--        <item name="android:statusBarColor">@android:color/white</item>-->
 <!--        <item name="colorControlNormal">@android:color/white</item>-->
     </style>

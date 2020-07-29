@@ -19,8 +19,10 @@ import androidx.navigation.fragment.NavHostFragment;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PersistableBundle;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -37,6 +39,7 @@ import java.util.List;
 
 import my.projects.todolist.database.TaskViewModel;
 import my.projects.todolist.database.TasksList;
+import my.projects.todolist.fragments.CompletedTasksFragment;
 import my.projects.todolist.fragments.HomeFragment;
 import my.projects.todolist.fragments.ListNameDialogFragment;
 
@@ -44,6 +47,10 @@ import static android.content.ContentValues.TAG;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "Main activity";
+    public static final String LAST_SELECTED_ITEM_ID = "selectedItem";
+    public static final String LAST_SELECTED_ITEM_NAME = "selectedName";
+
+    public static final String FILE_NAME_FOR_LAST_SELECTED_LIST = "last_selected_list";
 
     private NavigationView navView;
     private DrawerLayout drawerLayout;
@@ -53,11 +60,19 @@ public class MainActivity extends AppCompatActivity {
 
     private Fragment mFragmentToSet ;
 
+    private int lastSelectedListId ;
+    private String lastSelectedItemName ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        if(savedInstanceState != null){
+//            lastSelectedListId = savedInstanceState.getInt(LAST_SELECTED_ITEM_ID);
+//            Toast.makeText(this, "selected list id: " + lastSelectedListId, Toast.LENGTH_SHORT).show();
+//        }
 
         taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
 
@@ -118,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setUpToolbar() {
         toolbar = findViewById(R.id.toolbar);
-//        toolbar.setTitle("");
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_navigation_drawer, R.string.close_navigation_drawer);
@@ -145,6 +160,10 @@ public class MainActivity extends AppCompatActivity {
         Menu menu = navView.getMenu();
         if(menu.findItem(list.getId()) == null){
             MenuItem menuItem = menu.add(R.id.nav_view_group_lists,list.getId(),5,list.getName());
+            if(menuItem.getItemId() == lastSelectedListId) {
+                menuItem.setCheckable(true);
+                menuItem.setChecked(true);
+            }
             menuItem.setIcon(R.drawable.ic_round_format_list_bulleted_24);
             menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
@@ -155,11 +174,15 @@ public class MainActivity extends AppCompatActivity {
                             drawerLayout.closeDrawer(navView);
                         }
                     },200);
-                    //navigateToHomeFragment();
+                    lastSelectedListId = item.getItemId();
+                    lastSelectedItemName = item.getTitle().toString();
+                    navigateToHomeFragment();
+                    item.setCheckable(true);
                     long listId = item.getItemId();
                     TasksList currentList = taskViewModel.getList(listId);
                     taskViewModel.setCurrentList(currentList);
                     toolbar.setTitle(currentList.getName());
+                    item.setChecked(true);
                     return true ;
                 }
             });
@@ -183,13 +206,19 @@ public class MainActivity extends AppCompatActivity {
                         return true;
 
                     case R.id.nav_view_menu_completed_tasks :
+                        toolbar.setTitle("Completed Tasks");
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 drawerLayout.closeDrawer(navView);
                             }
                         },200);
+                        Fragment fragment = getCurrentFragment();
+                        if(fragment instanceof CompletedTasksFragment){
+                            navigateToFragment(R.id.action_completedTasksFragment_self);
+                        }else{
                             navigateToFragment(R.id.action_homeFragment_to_completedTasksFragment);
+                        }
                             return true ;
 
 
@@ -213,7 +242,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private Fragment getCurrentFragment(){
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().getPrimaryNavigationFragment();
+        FragmentManager fragmentManager = navHostFragment.getChildFragmentManager();
 
+        Fragment fragment = fragmentManager.getPrimaryNavigationFragment();
+        return fragment;
+    }
 
     private void navigateToDialogFragment(){
         ListNameDialogFragment newListDialog = new ListNameDialogFragment();
@@ -280,6 +315,55 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return false;
         }
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt(LAST_SELECTED_ITEM_ID,lastSelectedListId);
+        outState.putString(LAST_SELECTED_ITEM_NAME,lastSelectedItemName);
+        super.onSaveInstanceState(outState);
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+            lastSelectedListId = savedInstanceState.getInt(LAST_SELECTED_ITEM_ID);
+            lastSelectedItemName = savedInstanceState.getString(LAST_SELECTED_ITEM_NAME);
+        Log.d(TAG, "onRestoreInstanceState: " + lastSelectedListId);
+        Log.d(TAG, "onRestoreInstanceState: " + lastSelectedItemName);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        SharedPreferences sharedPreferences = getSharedPreferences(FILE_NAME_FOR_LAST_SELECTED_LIST,MODE_PRIVATE);
+
+        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+
+        sharedPreferencesEditor.putInt(LAST_SELECTED_ITEM_ID,lastSelectedListId);
+        sharedPreferencesEditor.putString(LAST_SELECTED_ITEM_NAME,lastSelectedItemName);
+
+        sharedPreferencesEditor.apply();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        SharedPreferences sharedPreferences = getSharedPreferences(FILE_NAME_FOR_LAST_SELECTED_LIST,MODE_PRIVATE);
+
+        lastSelectedItemName = sharedPreferences.getString(LAST_SELECTED_ITEM_NAME,"");
+        lastSelectedListId = sharedPreferences.getInt(LAST_SELECTED_ITEM_ID,-1);
+
+        toolbar.setTitle(lastSelectedItemName);
+
+        TasksList currentList = taskViewModel.getList(lastSelectedListId);
+        if(currentList != null)
+            taskViewModel.setCurrentList(currentList);
     }
 
     //    private void navigateConditionally(){
