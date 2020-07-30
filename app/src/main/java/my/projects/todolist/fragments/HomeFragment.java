@@ -126,8 +126,8 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
                 String taskName = mQuickTaskName.getText().toString().trim();
                 Task task = new Task(taskName,PriorityConverter.fromStringToPriority("Low"));
 
-                TasksList tasksList = mTaskViewModel.getCurrentList().getValue();
-                mTaskViewModel.insertTaskToList(tasksList,task);
+               // TasksList tasksList = mTaskViewModel.getCurrentList().getValue();
+                mTaskViewModel.insertTaskToList(task);
                 mQuickTaskName.setText("");
 
                 //                mTaskViewModel.insert(new Task(taskName, PriorityConverter.fromStringToPriority("Low")));

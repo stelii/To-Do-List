@@ -58,6 +58,9 @@ public abstract class TaskDao {
         insert(task);
     }
 
+    @Query("DELETE FROM tasks_table WHERE listId = :listId")
+    abstract void deleteTasksFromList(long listId);
+
 
 
 }

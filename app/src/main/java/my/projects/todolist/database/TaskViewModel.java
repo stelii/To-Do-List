@@ -47,6 +47,13 @@ public class TaskViewModel extends AndroidViewModel {
         super(application);
         mRepository = new TaskRepository(application);
 
+        tasksFromList = Transformations.switchMap(currentList, new Function<TasksList, LiveData<List<Task>>>() {
+            @Override
+            public LiveData<List<Task>> apply(TasksList input) {
+                return mRepository.getTasksFromList(input.getId());
+            }
+        });
+
             tasksFromList = Transformations.switchMap(mFilterText, new Function<String, LiveData<List<Task>>>() {
                 @Override
                 public LiveData<List<Task>> apply(String input) {
@@ -57,12 +64,7 @@ public class TaskViewModel extends AndroidViewModel {
                 }
             });
 
-            tasksFromList = Transformations.switchMap(currentList, new Function<TasksList, LiveData<List<Task>>>() {
-                @Override
-                public LiveData<List<Task>> apply(TasksList input) {
-                    return mRepository.getTasksFromList(input.getId());
-                }
-            });
+
 
 //            currentList = Transformations.switchMap(mListName, new Function<String, LiveData<TasksList>>() {
 //                @Override
@@ -126,7 +128,12 @@ public class TaskViewModel extends AndroidViewModel {
         return tasksFromList;
     }
 
-    public void insertTaskToList(TasksList tasksList, Task task){
-        mRepository.insertTaskToList(tasksList,task);
+    public void insertTaskToList(Task task){
+        mRepository.insertTaskToList(currentList.getValue(),task);
     }
+
+    public void deleteTasksFromList(){
+        mRepository.deleteTasksFromList(currentList.getValue().getId());
+    }
+
 }

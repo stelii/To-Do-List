@@ -113,8 +113,11 @@ public class MainActivity extends AppCompatActivity {
         taskViewModel.getListName().observe(this, new Observer<String>() {
             @Override
             public void onChanged(String s) {
-                Log.d(TAG, "onChanged: " + "ceva ceva boss");
-                taskViewModel.insertList(new TasksList(s));
+                long insertedId = taskViewModel.insertList(new TasksList(s));
+                toolbar.setTitle(s);
+
+                lastSelectedItemName = s ;
+                lastSelectedListId = (int)insertedId;
             }
         });
     }
@@ -176,11 +179,12 @@ public class MainActivity extends AppCompatActivity {
                     },200);
                     lastSelectedListId = item.getItemId();
                     lastSelectedItemName = item.getTitle().toString();
-                    navigateToHomeFragment();
+                    navigateToFragment(R.id.action_homeFragment_self);
                     item.setCheckable(true);
                     long listId = item.getItemId();
                     TasksList currentList = taskViewModel.getList(listId);
                     taskViewModel.setCurrentList(currentList);
+                    Log.d(TAG, "onMenuItemClick: " + currentList.getName());
                     toolbar.setTitle(currentList.getName());
                     item.setChecked(true);
                     return true ;
@@ -267,6 +271,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        Toast.makeText(this, "onBackPressed is called", Toast.LENGTH_SHORT).show();
         if (drawerLayout.isDrawerOpen(navView)) drawerLayout.closeDrawer(navView);
         else super.onBackPressed();
     }
@@ -309,7 +314,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.toolbar_menu_delete_all:
-                taskViewModel.deleteAll();
+                taskViewModel.deleteTasksFromList();
                 return false;
 
             default:

@@ -80,6 +80,10 @@ public class TaskRepository {
         }
     }
 
+    public void deleteTasksFromList(long id){
+        new DeleteAllTasksFromList(taskDao).execute(id);
+    }
+
     private static class FilterTaskAsyncTask extends AsyncTask<String,Void,LiveData<List<Task>>>{
         private TaskDao mTaskDao ;
         private long listId ;
@@ -250,6 +254,21 @@ public class TaskRepository {
         protected Void doInBackground(Void... voids) {
             taskDao.insertTaskToList(tasksList,task);
             return null ;
+        }
+    }
+
+    private static class DeleteAllTasksFromList extends AsyncTask<Long,Void,Void>{
+        private TaskDao taskDao ;
+
+        public DeleteAllTasksFromList(TaskDao taskDao){
+            this.taskDao = taskDao;
+        }
+
+
+        @Override
+        protected Void doInBackground(Long... longs) {
+            taskDao.deleteTasksFromList(longs[0]);
+            return null;
         }
     }
 }
