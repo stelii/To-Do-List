@@ -27,11 +27,13 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -54,6 +56,8 @@ public class AddEditFragment extends Fragment {
 
     private DatePicker mDatePicker ;
     private TimePicker mTimePicker ;
+
+    private EditText taskDescriptionInput ;
 
 //    private FloatingActionButton addTaskFabButton ;
     private TaskViewModel mTaskViewModel ;
@@ -81,6 +85,8 @@ public class AddEditFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+//        ((AppCompatActivity) requireActivity()).getSupportActionBar().setTitle("");
         // Inflate the layout for this fragment
 
         //raporteaza faptul ca acest fragment vrea sa participe la popularea elementelor meniului de toolbar primind un apel la metodele care au legatura cu meniul
@@ -94,14 +100,14 @@ public class AddEditFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        mTaskViewModel = new ViewModelProvider(this,
-                ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication())).get(TaskViewModel.class);
+        mTaskViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
 
         taskNameInput = view.findViewById(R.id.add_edit_fragment_task_name_input);
         datePicker = view.findViewById(R.id.add_edit_fragment_task_date_input);
         datePickerDisplay = view.findViewById(R.id.add_edit_fragment_task_date_display);
         timePicker = view.findViewById(R.id.add_edit_fragment_task_time_input);
         timePickerDisplay = view.findViewById(R.id.add_edit_fragment_task_time_display);
+        taskDescriptionInput = view.findViewById(R.id.add_edit_fragment_task_description_input);
 
         timePicker.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -123,6 +129,7 @@ public class AddEditFragment extends Fragment {
         priorityChoiceSpinner.setAdapter(spinnerAdapter);
 
         assert getArguments() != null;
+        //daca am ajuns pe pagina de editare/adaugare cu un Task
         if(getArguments().getInt("taskArg") != -1){
             AddEditFragmentArgs args = AddEditFragmentArgs.fromBundle(getArguments());
             int idPassed = args.getTaskArg();
@@ -130,6 +137,23 @@ public class AddEditFragment extends Fragment {
 
             taskNameInput.setText(task.getName());
             priorityChoiceSpinner.setSelection(task.getPriority().getValue());
+            taskDescriptionInput.setText(task.getDescription());
+            Date date = task.getDate();
+            if(date != null){
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+                int month = calendar.get(Calendar.MONTH);
+                int year = calendar.get(Calendar.YEAR);
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                int minute = calendar.get(Calendar.MINUTE);
+
+
+                datePickerDisplay.setText(day + "/" + month + "/" + year);
+                timePickerDisplay.setText(hour + ":" + minute);
+            }
+
         }
 
 
@@ -167,15 +191,17 @@ public class AddEditFragment extends Fragment {
             task.setName(taskName);
             task.setPriority(PriorityConverter.fromStringToPriority(taskPriority));
             task.setDate(getDateFromPickers(mDatePicker,mTimePicker));
+            task.setDescription(taskDescriptionInput.getText().toString().trim());
             mTaskViewModel.update(task);
         }else{
             Task task = new Task(taskName,PriorityConverter.fromStringToPriority(taskPriority));
             task.setDate(getDateFromPickers(mDatePicker,mTimePicker));
+            task.setDescription(taskDescriptionInput.getText().toString().trim());
 //                    Task task = new Task.TaskBuilder()
 //                            .setName(taskName)
 //                            .setPriority(PriorityConverter.fromStringToPriority(taskPriority))
 //                            .createTask();
-            mTaskViewModel.insert(task);
+            mTaskViewModel.insertTaskToList(task);
         }
         NavController navController = Navigation.findNavController(requireActivity(),R.id.nav_host_fragment);
         navController.navigate(R.id.action_addEditFragment_to_homeFragment);
@@ -227,6 +253,7 @@ public class AddEditFragment extends Fragment {
         menu.findItem(R.id.toolbar_menu_delete_all).setVisible(false);
         menu.findItem(R.id.toolbar_menu_search_button).setVisible(false);
         menu.findItem(R.id.toolbar_menu_save_button).setVisible(true);
+        menu.findItem(R.id.toolbar_menu_delete_item).setVisible(true);
     }
 
     private Date getDateFromPickers(DatePicker datePicker, TimePicker timePicker){
@@ -261,9 +288,34 @@ public class AddEditFragment extends Fragment {
             case R.id.toolbar_menu_save_button :
                 saveItem();
                 return true ;
+
+            case R.id.toolbar_menu_delete_item :
+                deleteItem();
+                return true ;
             default : return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    private void deleteItem() {
+      if(requireArguments().getInt("taskArg") != -1){
+          AddEditFragmentArgs args = AddEditFragmentArgs.fromBundle(requireArguments());
+          int idPassed = args.getTaskArg();
+          Task task = mTaskViewModel.getTask(idPassed);
+
+          mTaskViewModel.delete(task);
+          navigateToHomeFragment();
+
+          Toast.makeText(requireContext(), "The item was deleted", Toast.LENGTH_SHORT).show();
+      }else{
+          Toast.makeText(requireContext(), "There is no item to delete", Toast.LENGTH_SHORT).show();
+      }
+    }
+
+    private void navigateToHomeFragment(){
+        NavController navController = Navigation.findNavController(requireActivity(),R.id.nav_host_fragment);
+        navController.navigate(R.id.action_addEditFragment_to_homeFragment);
+        hideKeyboard(getView());
     }
 
     private void hideKeyboard(View view){

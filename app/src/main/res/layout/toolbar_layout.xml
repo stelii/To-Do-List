@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:elevation="4dp"
-        android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar"
+        android:theme="@style/MyThemeOverlay_Toolbar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         android:background="@android:color/holo_red_light" />
 

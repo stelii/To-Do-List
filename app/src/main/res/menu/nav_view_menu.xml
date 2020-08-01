@@ -1,9 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/nav_view_menu_home"
-        android:title="Home"
-        android:icon="@drawable/ic_baseline_home_24"
-        />
+    <group android:id="@+id/nav_view_group_lists"
+        android:checkableBehavior="single"
+        android:enabled="true">
+
+    </group>
+
+    <group
+        android:id="@+id/nav_view_group_id1"
+        android:checkableBehavior="single"
+        android:menuCategory="secondary">
+        <item android:title="Add New List"
+            android:id="@+id/nav_view_menu_add_new_list"
+            android:icon="@drawable/ic_baseline_add_circle_24"
+            android:orderInCategory="1"/>
+
+        <item android:id="@+id/nav_view_menu_home"
+            android:title="Home"
+            android:icon="@drawable/ic_baseline_home_24"
+            />
+
+        <item android:id="@+id/nav_view_menu_completed_tasks"
+            android:title="Completed tasks"
+            android:orderInCategory="2"
+            android:icon="@drawable/ic_baseline_check_circle_24"/>
+    </group>
+
+
+
 
 </menu>

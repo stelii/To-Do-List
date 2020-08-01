@@ -24,6 +24,13 @@
         android:title="Save task"
         android:visible="false"/>
 
+    <item android:id="@+id/toolbar_menu_delete_item"
+        android:title="Delete Item"
+        app:showAsAction="ifRoom"
+        android:visible="false"
+        android:icon="@drawable/ic_baseline_delete_24"
+        />
+
 
 
 

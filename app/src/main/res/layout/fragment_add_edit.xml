@@ -12,10 +12,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
+        android:drawableStart="@drawable/ic_baseline_drag_handle_24"
+        android:drawablePadding="12dp"
         android:hint="Task Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/add_edit_fragment_task_description_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="16dp"
+        android:drawableStart="@drawable/ic_baseline_dehaze_24"
+        android:drawablePadding="12dp"
+        android:hint="Description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_edit_fragment_task_name_input" />
 
     <EditText
         android:id="@+id/add_edit_fragment_task_date_display"
@@ -23,9 +38,11 @@
         android:layout_height="wrap_content"
 
         android:layout_marginTop="16dp"
+        android:enabled="false"
         android:hint="Due Date"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_task_name_input" />
+        app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_task_description_input" />
 
     <ImageView
         android:id="@+id/add_edit_fragment_task_date_input"
@@ -34,9 +51,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
 
-        android:src="@drawable/baseline_event_black_18dp"
+        android:src="@drawable/ic_baseline_today_36"
         app:layout_constraintStart_toEndOf="@id/add_edit_fragment_task_date_display"
-        app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_task_name_input"
+        app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_task_description_input"
         app:tint="@android:color/holo_blue_dark" />
 
     <ImageView
@@ -46,18 +63,19 @@
         android:layout_marginStart="16dp"
 
         android:layout_marginTop="24dp"
-        android:src="@drawable/baseline_cancel_black_18dp"
+        android:src="@drawable/ic_baseline_cancel_36"
         app:layout_constraintStart_toEndOf="@id/add_edit_fragment_task_date_input"
-        app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_task_name_input"
-        app:tint="@android:color/holo_blue_dark" />
+        app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_task_description_input"
+        app:tint="@android:color/holo_red_dark" />
 
     <EditText
         android:id="@+id/add_edit_fragment_task_time_display"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-
         android:layout_marginTop="20dp"
+        android:enabled="false"
         android:hint="Time"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_task_date_display" />
 
@@ -67,7 +85,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="28dp"
-        android:src="@drawable/baseline_schedule_black_18dp"
+        android:src="@drawable/ic_baseline_access_time_36"
         android:tint="@android:color/holo_blue_dark"
         app:layout_constraintStart_toEndOf="@id/add_edit_fragment_task_time_display"
         app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_task_date_input" />
@@ -80,10 +98,10 @@
         android:layout_marginStart="16dp"
 
         android:layout_marginTop="28dp"
-        android:src="@drawable/baseline_cancel_black_18dp"
+        android:src="@drawable/ic_baseline_cancel_36"
         app:layout_constraintStart_toEndOf="@id/add_edit_fragment_task_time_input"
         app:layout_constraintTop_toBottomOf="@id/add_edit_fragment_task_date_remove"
-        app:tint="@android:color/holo_blue_dark" />
+        app:tint="@android:color/holo_red_dark" />
 
     <TextView
         android:id="@+id/add_edit_fragment_priority_choice_text"

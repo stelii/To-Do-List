@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
 
-        android:src="@drawable/ic_baseline_add_24"
+        android:src="@drawable/ic_baseline_add_48"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:tint="@android:color/white"
@@ -32,7 +32,7 @@
         android:id="@+id/home_fragment_button_quick_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_check_48"
+        android:src="@drawable/check_black_48"
         android:visibility="invisible"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"

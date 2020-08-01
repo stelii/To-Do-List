@@ -17,40 +17,71 @@ public class TaskViewModel extends AndroidViewModel {
     private TaskRepository mRepository ;
     public static final String TAG = "TaskViewModel";
 
-
+    private LiveData<List<Task>> tasksFromList ;
 
     private MutableLiveData<String> mFilterText = new MutableLiveData<>();
+
+    private MutableLiveData<String> mListName = new MutableLiveData<>();
+
+    private MutableLiveData<TasksList> currentList = new MutableLiveData<>();
+
+    public void setCurrentList(TasksList list){
+        currentList.setValue(list);
+    }
+
+    public MutableLiveData<TasksList> getCurrentList(){
+        return currentList;
+    }
+
+    public void setListName(String name){
+        mListName.setValue(name);
+    }
+
+    public LiveData<String> getListName(){
+        return mListName;
+    }
+
 
 
     public TaskViewModel(@NonNull Application application) {
         super(application);
         mRepository = new TaskRepository(application);
-        tasks = Transformations.switchMap(mFilterText, new Function<String, LiveData<List<Task>>>() {
+
+        tasksFromList = Transformations.switchMap(currentList, new Function<TasksList, LiveData<List<Task>>>() {
             @Override
-            public LiveData<List<Task>> apply(String input) {
-                if(input == null || input.isEmpty()){
-                    Log.d(TAG, "apply: " + "?!!!");
-                    return mRepository.getTasks();
-                }
-                return mRepository.filter(input);
+            public LiveData<List<Task>> apply(TasksList input) {
+                return mRepository.getTasksFromList(input.getId());
             }
         });
+
+            tasksFromList = Transformations.switchMap(mFilterText, new Function<String, LiveData<List<Task>>>() {
+                @Override
+                public LiveData<List<Task>> apply(String input) {
+                    if(input == null || input.isEmpty()){
+                            return mRepository.getTasksFromList(currentList.getValue().getId());
+                    }
+                    return mRepository.filter(currentList.getValue().getId(),input);
+                }
+            });
+
+
+
+//            currentList = Transformations.switchMap(mListName, new Function<String, LiveData<TasksList>>() {
+//                @Override
+//                public LiveData<TasksList> apply(String input) {
+//                    TasksList newList = new TasksList(input);
+//                    long id = mRepository.insertList(newList);
+//                    return mRepository.getList()
+//                }
+//            });
+
     }
 
     public void setFilter(String query){
         Log.d(TAG, "setFilter: " + query);
         mFilterText.setValue(query);
-//        tasks = Transformations.switchMap(mFilterText, new Function<String, LiveData<List<Task>>>() {
-//            @Override
-//            public LiveData<List<Task>> apply(String input) {
-//                if(input == null || input.isEmpty()){
-//                    Log.d(TAG, "apply: " + "?!!!");
-//                    return mRepository.getTasks();
-//                }
-//                return mRepository.filter(input);
-//            }
-//        });
     }
+
 
 
     public void insert(Task task){
@@ -59,6 +90,14 @@ public class TaskViewModel extends AndroidViewModel {
 
     public LiveData<List<Task>> getTasks(){
         return tasks;
+    }
+
+    public LiveData<List<TasksList>> getAllLists(){
+        return mRepository.getAllLists();
+    }
+
+    public LiveData<List<Task>> getCompletedTasks(){
+        return mRepository.getCompletedTasks();
     }
 
     public void delete(Task task){
@@ -76,4 +115,25 @@ public class TaskViewModel extends AndroidViewModel {
     public void deleteAll(){
         mRepository.deleteAll();
     }
+
+    public long insertList(TasksList tasksList){
+       return mRepository.insertList(tasksList);
+    }
+
+    public TasksList getList(long id){
+        return mRepository.getList(id);
+    }
+
+    public LiveData<List<Task>> getTasksFromList(){
+        return tasksFromList;
+    }
+
+    public void insertTaskToList(Task task){
+        mRepository.insertTaskToList(currentList.getValue(),task);
+    }
+
+    public void deleteTasksFromList(){
+        mRepository.deleteTasksFromList(currentList.getValue().getId());
+    }
+
 }

@@ -9,8 +9,11 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
+import androidx.arch.core.util.Function;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -47,6 +50,7 @@ import my.projects.todolist.R;
 import my.projects.todolist.adapters.TaskAdapter;
 import my.projects.todolist.database.Task;
 import my.projects.todolist.database.TaskViewModel;
+import my.projects.todolist.database.TasksList;
 import my.projects.todolist.database.converters.PriorityConverter;
 import my.projects.todolist.models.Priority;
 
@@ -90,7 +94,7 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        Log.d(TAG, "onViewCreated: " + "the fragment was created");
         mAddNewTaskFabBtn = view.findViewById(R.id.home_fragment_fab_button_add);
         mQuickTaskName = view.findViewById(R.id.home_fragment_task_name_quick_input);
         mQuickTaskName.addTextChangedListener(new TextWatcher() {
@@ -119,9 +123,14 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
         mQuickAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String taskName = mQuickTaskName.getText().toString();
-                mTaskViewModel.insert(new Task(taskName, PriorityConverter.fromStringToPriority("Low")));
+                String taskName = mQuickTaskName.getText().toString().trim();
+                Task task = new Task(taskName,PriorityConverter.fromStringToPriority("Low"));
+
+               // TasksList tasksList = mTaskViewModel.getCurrentList().getValue();
+                mTaskViewModel.insertTaskToList(task);
                 mQuickTaskName.setText("");
+
+                //                mTaskViewModel.insert(new Task(taskName, PriorityConverter.fromStringToPriority("Low")));
                 hideKeyboard(v);
 
             }
@@ -136,19 +145,52 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
         mTaskAdapter.setOnItemClickListener(this);
 
 
-        mTaskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
+        mTaskViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
 //        mTaskViewModel =
 //                new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory
 //                        .getInstance(getActivity().getApplication())).get(TaskViewModel.class);
 
         mTaskViewModel.setFilter("");
 
-        mTaskViewModel.getTasks().observe(getViewLifecycleOwner(), new Observer<List<Task>>() {
+//        mTaskViewModel.getTasks().observe(getViewLifecycleOwner(), new Observer<List<Task>>() {
+//            @Override
+//            public void onChanged(List<Task> tasks) {
+//                mTaskAdapter.submitList(tasks);
+//            }
+//        });
+
+
+//        mTaskViewModel.getTasksFromList().observe(getViewLifecycleOwner(), new Observer<List<Task>>() {
+//            @Override
+//            public void onChanged(List<Task> tasks) {
+//                Log.d(TAG, "onChanged from viewmodel");
+//                mTaskAdapter.submitList(tasks);
+//            }
+//        });
+
+
+        mTaskViewModel.getCurrentList().observe(getViewLifecycleOwner(), new Observer<TasksList>() {
             @Override
-            public void onChanged(List<Task> tasks) {
-                mTaskAdapter.submitList(tasks);
+            public void onChanged(TasksList tasksList) {
+                mTaskViewModel.getTasksFromList().observe(getViewLifecycleOwner(), new Observer<List<Task>>() {
+                    @Override
+                    public void onChanged(List<Task> tasks) {
+                        mTaskAdapter.submitList(tasks);
+                    }
+                });
             }
         });
+
+//        mTaskViewModel.getListName().observe(getViewLifecycleOwner(), new Observer<String>() {
+//            @Override
+//            public void onChanged(String s) {
+//                Log.d(TAG, "onChanged: " + "ceva ceva boss");
+//                TasksList newList = new TasksList(s);
+//                mTaskViewModel.insertList(newList);
+//                mTaskViewModel.setCurrentList(newList);
+//                Toast.makeText(requireContext(), newList.getId() + "", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
         mAddNewTaskFabBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,6 +203,11 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
 
         enableSwipeToDeleteAndUndo(mTaskList);
 
+        setAListToDisplay();
+
+    }
+
+    private void setAListToDisplay(){
     }
 
     private static void hideKeyboard(View view){
@@ -174,7 +221,7 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
         ItemTouchHelper.Callback callback = new ItemTouchHelper.Callback() {
             @Override
             public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
-                return makeMovementFlags(0,ItemTouchHelper.START | ItemTouchHelper.END);
+                return makeMovementFlags(0,ItemTouchHelper.START);
             }
 
             @Override
@@ -302,6 +349,7 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
             public boolean onQueryTextChange(String newText) {
                 Log.d(TAG, "onQueryTextChange: " + ">???");
                 mTaskViewModel.setFilter(newText);
+                Log.d(TAG, "onQueryTextChange: " + mTaskViewModel.getCurrentList().getValue().getName());
 //                mTaskViewModel.oMetoda();
                 return true;
             }
