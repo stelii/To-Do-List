@@ -126,9 +126,6 @@ public class TaskRepository {
         }
     }
 
-    //TODO : Am reusit sa introduc lista in baza de date, iar acum trebuie sa fac cu ViewPager pentru fiecare lista (prima data sa incerc sa introduc elemente in fiecare lista
-    //TODO : si sa le afisez
-
 
     private static class InsertAsyncTask extends AsyncTask<Task,Void,Void>{
         private TaskDao taskDao ;

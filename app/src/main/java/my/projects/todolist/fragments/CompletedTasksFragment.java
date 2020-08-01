@@ -21,7 +21,7 @@ import my.projects.todolist.adapters.TaskAdapter;
 import my.projects.todolist.database.Task;
 import my.projects.todolist.database.TaskViewModel;
 
-public class CompletedTasksFragment extends Fragment {
+public class CompletedTasksFragment extends Fragment implements TaskAdapter.OnCheckboxListener, TaskAdapter.OnItemClickListener {
 
     private RecyclerView mCompletedTasksRecyclerView ;
     private TaskAdapter mTaskAdapter ;
@@ -59,6 +59,9 @@ public class CompletedTasksFragment extends Fragment {
         mTaskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
         mTaskAdapter = new TaskAdapter();
 
+        mTaskAdapter.setOnItemClickListener(this);
+        mTaskAdapter.setCheckboxListener(this);
+
         mCompletedTasksRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         mCompletedTasksRecyclerView.setAdapter(mTaskAdapter);
 
@@ -68,5 +71,19 @@ public class CompletedTasksFragment extends Fragment {
                 mTaskAdapter.submitList(tasks);
             }
         });
+    }
+
+    @Override
+    public boolean changeItemStatus(Task task) {
+        if(task.isDone()) task.setDone(false);
+        else task.setDone(true);
+
+        mTaskViewModel.update(task);
+        return task.isDone();
+    }
+
+    @Override
+    public void onItemShortClick(Task task) {
+            //do nothing
     }
 }

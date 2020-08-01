@@ -62,5 +62,4 @@ public abstract class TaskDao {
     abstract void deleteTasksFromList(long listId);
 
 
-
 }

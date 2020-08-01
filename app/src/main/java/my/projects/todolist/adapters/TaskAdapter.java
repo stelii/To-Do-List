@@ -198,10 +198,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 mTaskName.setPaintFlags(mTaskName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 mTaskDescription.setVisibility(View.GONE);
 
-//                Calendar calendar = Calendar.getInstance();
-//                int currentHour24Format = calendar.get(Calendar.HOUR_OF_DAY);
-//                int currentMinute = calendar.get(Calendar.MINUTE);
-
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
                 String hour = simpleDateFormat.format(new Date());
 

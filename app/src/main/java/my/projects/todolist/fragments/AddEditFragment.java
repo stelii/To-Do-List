@@ -85,6 +85,8 @@ public class AddEditFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+//        ((AppCompatActivity) requireActivity()).getSupportActionBar().setTitle("");
         // Inflate the layout for this fragment
 
         //raporteaza faptul ca acest fragment vrea sa participe la popularea elementelor meniului de toolbar primind un apel la metodele care au legatura cu meniul
@@ -199,7 +201,7 @@ public class AddEditFragment extends Fragment {
 //                            .setName(taskName)
 //                            .setPriority(PriorityConverter.fromStringToPriority(taskPriority))
 //                            .createTask();
-            mTaskViewModel.insert(task);
+            mTaskViewModel.insertTaskToList(task);
         }
         NavController navController = Navigation.findNavController(requireActivity(),R.id.nav_host_fragment);
         navController.navigate(R.id.action_addEditFragment_to_homeFragment);

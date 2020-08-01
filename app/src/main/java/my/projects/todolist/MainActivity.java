@@ -78,30 +78,30 @@ public class MainActivity extends AppCompatActivity {
 
 
         drawerLayout = findViewById(R.id.main_activity_drawer_layout);
-        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
-            @Override
-            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
-
-            }
-
-            @Override
-            public void onDrawerOpened(@NonNull View drawerView) {
-
-            }
-
-            @Override
-            public void onDrawerClosed(@NonNull View drawerView) {
-                if(mFragmentToSet != null){
-                    navigateToHomeFragment();
-                    mFragmentToSet = null ;
-                }
-            }
-
-            @Override
-            public void onDrawerStateChanged(int newState) {
-
-            }
-        });
+//        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+//            @Override
+//            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+//
+//            }
+//
+//            @Override
+//            public void onDrawerOpened(@NonNull View drawerView) {
+//
+//            }
+//
+//            @Override
+//            public void onDrawerClosed(@NonNull View drawerView) {
+//                if(mFragmentToSet != null){
+//                    navigateToHomeFragment();
+//                    mFragmentToSet = null ;
+//                }
+//            }
+//
+//            @Override
+//            public void onDrawerStateChanged(int newState) {
+//
+//            }
+//        });
         navView = findViewById(R.id.main_activity_nav_view);
 
         setUpToolbar();
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                 toolbar.setTitle(s);
 
                 lastSelectedItemName = s ;
-                lastSelectedListId = (int)insertedId;
+                lastSelectedListId = (int) insertedId;
             }
         });
     }
@@ -145,6 +145,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpNavViewItems(){
+        Menu menu = navView.getMenu();
+//        menuItem.setChecked(true);
         taskViewModel.getAllLists().observe(this, new Observer<List<TasksList>>() {
             @Override
             public void onChanged(List<TasksList> tasksLists) {
@@ -158,7 +160,6 @@ public class MainActivity extends AppCompatActivity {
 
     //TODO : sterge din lista , actualizeaza din lista
     //TODO : adauga,sterge,actualizeaza din pagina de adaugare/editare
-    //TODO : cand se intra in aplicatie, daca exista vreo lista creata, acea lista va fii afisata
     private void addMenuItemsNavMenuDrawer(final TasksList list){
         Menu menu = navView.getMenu();
         if(menu.findItem(list.getId()) == null){
@@ -179,7 +180,9 @@ public class MainActivity extends AppCompatActivity {
                     },200);
                     lastSelectedListId = item.getItemId();
                     lastSelectedItemName = item.getTitle().toString();
-                    navigateToFragment(R.id.action_homeFragment_self);
+
+                    if(getCurrentFragment() instanceof HomeFragment) navigateToFragment(R.id.action_homeFragment_self);
+                    else navigateToHomeFragment();
                     item.setCheckable(true);
                     long listId = item.getItemId();
                     TasksList currentList = taskViewModel.getList(listId);
@@ -199,6 +202,9 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.nav_view_menu_home:
+//                        lastSelectedItemName = item.getTitle().toString();
+//                        lastSelectedListId = item.getItemId();
+//                        Toast.makeText(MainActivity.this, lastSelectedListId + "", Toast.LENGTH_SHORT).show();
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -210,7 +216,9 @@ public class MainActivity extends AppCompatActivity {
                         return true;
 
                     case R.id.nav_view_menu_completed_tasks :
-                        toolbar.setTitle("Completed Tasks");
+                        lastSelectedItemName = item.getTitle().toString();
+//                        lastSelectedListId = item.getItemId();
+                        toolbar.setTitle(lastSelectedItemName);
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -271,7 +279,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Toast.makeText(this, "onBackPressed is called", Toast.LENGTH_SHORT).show();
         if (drawerLayout.isDrawerOpen(navView)) drawerLayout.closeDrawer(navView);
         else super.onBackPressed();
     }
@@ -280,7 +287,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.toolbar_menu, menu);
-        Log.d(TAG, "onCreateOptionsMenu: " + "from activity???");
 
         MenuItem menuItem = menu.findItem(R.id.toolbar_menu_search_button);
         SearchView searchView = (SearchView)menuItem.getActionView();
