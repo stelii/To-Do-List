@@ -22,3 +22,4 @@
 2. A way to add a memento and the user to be notified when the task has reached its due date
 
 ![img](https://i.imgur.com/NgQGVbz.png) ![img](https://i.imgur.com/KC0ZnZe.png) ![img](https://i.imgur.com/C1zHLrY.png)
+![img](https://i.imgur.com/3cb8W0C.png) ![img](https://i.imgur.com/jTNKyUC.png) ![img](https://i.imgur.com/sHghPLp.png)
