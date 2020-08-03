@@ -17,5 +17,4 @@
 4. Snackbar
 5. Navigation Components
 
-![img](https://i.imgur.com/NgQGVbz.png)
-![img](https://i.imgur.com/KC0ZnZe.png)
+![img](https://i.imgur.com/NgQGVbz.png) ![img](https://i.imgur.com/KC0ZnZe.png) ![img](https://i.imgur.com/C1zHLrY.png)
