@@ -17,6 +17,14 @@
         android:orderInCategory="100"
         />
 
+    <item
+        app:showAsAction="never"
+        android:id="@+id/toolbar_menu_delete_all_lists"
+        android:title="Delete All Lists"
+        android:orderInCategory="200"
+        android:visible="true"/>
+
+
     <item app:showAsAction="always"
         android:id="@+id/toolbar_menu_save_button"
         android:icon="@drawable/ic_baseline_check_48"

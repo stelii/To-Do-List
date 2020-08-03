@@ -15,12 +15,13 @@ import my.projects.todolist.models.Priority;
 
 import static androidx.room.ForeignKey.CASCADE;
 
-@Entity(tableName = "tasks_table")
-@ForeignKey(entity = TasksList.class,
-        parentColumns = "id",
-        childColumns = "listId",
-        onDelete = CASCADE,
-        onUpdate = CASCADE)
+@Entity(tableName = "tasks_table",foreignKeys = {
+        @ForeignKey(entity = TasksList.class,
+                parentColumns = "id",
+                childColumns = "listId",
+                onDelete = CASCADE,
+                onUpdate = CASCADE)
+            })
 public class Task {
 
     @PrimaryKey(autoGenerate = true)
