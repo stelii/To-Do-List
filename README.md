@@ -18,7 +18,7 @@
 6. SharedPreferences
 
 # Features that need to be implemented in the future 
-The user can use the voice control to quickly add a new item.
-A way to add a memento and the user to be notified when the task has reached its due date
+1. The user can use the voice control to quickly add a new item.
+2. A way to add a memento and the user to be notified when the task has reached its due date
 
 ![img](https://i.imgur.com/NgQGVbz.png) ![img](https://i.imgur.com/KC0ZnZe.png) ![img](https://i.imgur.com/C1zHLrY.png)
