@@ -61,5 +61,7 @@ public abstract class TaskDao {
     @Query("DELETE FROM tasks_table WHERE listId = :listId")
     abstract void deleteTasksFromList(long listId);
 
+    @Query("DELETE FROM taskslist_table")
+    abstract void deleteAllLists();
 
 }

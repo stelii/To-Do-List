@@ -126,6 +126,10 @@ public class TaskRepository {
         }
     }
 
+    public void deleteAllLists(){
+        new DeleteAllLists(taskDao).execute();
+    }
+
 
     private static class InsertAsyncTask extends AsyncTask<Task,Void,Void>{
         private TaskDao taskDao ;
@@ -265,6 +269,20 @@ public class TaskRepository {
         @Override
         protected Void doInBackground(Long... longs) {
             taskDao.deleteTasksFromList(longs[0]);
+            return null;
+        }
+    }
+
+    private static class DeleteAllLists extends AsyncTask<Void,Void,Void>{
+        private TaskDao taskDao ;
+
+        public DeleteAllLists(TaskDao taskDao){
+            this.taskDao = taskDao;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            taskDao.deleteAllLists();
             return null;
         }
     }

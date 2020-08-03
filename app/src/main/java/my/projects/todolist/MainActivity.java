@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = "Main activity";
     public static final String LAST_SELECTED_ITEM_ID = "selectedItem";
     public static final String LAST_SELECTED_ITEM_NAME = "selectedName";
+    public static final String DOES_LISTS_EXIST_FLAG = "does_lists_exist_flag";
 
     public static final String FILE_NAME_FOR_LAST_SELECTED_LIST = "last_selected_list";
 
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
     private int lastSelectedListId ;
     private String lastSelectedItemName ;
+    private boolean listsExistFlag ;
 
 
     @Override
@@ -145,8 +147,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpNavViewItems(){
-        Menu menu = navView.getMenu();
-//        menuItem.setChecked(true);
         taskViewModel.getAllLists().observe(this, new Observer<List<TasksList>>() {
             @Override
             public void onChanged(List<TasksList> tasksLists) {
@@ -157,13 +157,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
-    //TODO : sterge din lista , actualizeaza din lista
-    //TODO : adauga,sterge,actualizeaza din pagina de adaugare/editare
     private void addMenuItemsNavMenuDrawer(final TasksList list){
         Menu menu = navView.getMenu();
         if(menu.findItem(list.getId()) == null){
             MenuItem menuItem = menu.add(R.id.nav_view_group_lists,list.getId(),5,list.getName());
+            listsExistFlag = true ;
             if(menuItem.getItemId() == lastSelectedListId) {
                 menuItem.setCheckable(true);
                 menuItem.setChecked(true);
@@ -187,7 +185,6 @@ public class MainActivity extends AppCompatActivity {
                     long listId = item.getItemId();
                     TasksList currentList = taskViewModel.getList(listId);
                     taskViewModel.setCurrentList(currentList);
-                    Log.d(TAG, "onMenuItemClick: " + currentList.getName());
                     toolbar.setTitle(currentList.getName());
                     item.setChecked(true);
                     return true ;
@@ -323,6 +320,15 @@ public class MainActivity extends AppCompatActivity {
                 taskViewModel.deleteTasksFromList();
                 return false;
 
+            case R.id.toolbar_menu_delete_all_lists:
+                taskViewModel.deleteAllLists();
+               navView.getMenu().removeGroup(R.id.nav_view_group_lists);
+               toolbar.setTitle("");
+                listsExistFlag = false ;
+               lastSelectedItemName = null;
+               navigateToHomeFragment();
+                return false ;
+
             default:
                 return false;
         }
@@ -333,6 +339,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putInt(LAST_SELECTED_ITEM_ID,lastSelectedListId);
         outState.putString(LAST_SELECTED_ITEM_NAME,lastSelectedItemName);
+        outState.putBoolean(DOES_LISTS_EXIST_FLAG,listsExistFlag);
         super.onSaveInstanceState(outState);
 
     }
@@ -342,6 +349,7 @@ public class MainActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
             lastSelectedListId = savedInstanceState.getInt(LAST_SELECTED_ITEM_ID);
             lastSelectedItemName = savedInstanceState.getString(LAST_SELECTED_ITEM_NAME);
+            listsExistFlag = savedInstanceState.getBoolean(DOES_LISTS_EXIST_FLAG);
         Log.d(TAG, "onRestoreInstanceState: " + lastSelectedListId);
         Log.d(TAG, "onRestoreInstanceState: " + lastSelectedItemName);
 
@@ -357,18 +365,28 @@ public class MainActivity extends AppCompatActivity {
 
         sharedPreferencesEditor.putInt(LAST_SELECTED_ITEM_ID,lastSelectedListId);
         sharedPreferencesEditor.putString(LAST_SELECTED_ITEM_NAME,lastSelectedItemName);
+        sharedPreferencesEditor.putBoolean(DOES_LISTS_EXIST_FLAG,listsExistFlag);
 
         sharedPreferencesEditor.apply();
     }
 
     @Override
     protected void onResume() {
+        Log.d(TAG, "onResume: ");
         super.onResume();
 
         SharedPreferences sharedPreferences = getSharedPreferences(FILE_NAME_FOR_LAST_SELECTED_LIST,MODE_PRIVATE);
 
         lastSelectedItemName = sharedPreferences.getString(LAST_SELECTED_ITEM_NAME,"");
         lastSelectedListId = sharedPreferences.getInt(LAST_SELECTED_ITEM_ID,-1);
+        listsExistFlag = sharedPreferences.getBoolean(DOES_LISTS_EXIST_FLAG,false);
+
+        Log.d(TAG, "onResume: " + listsExistFlag);
+
+//        if(listsExistFlag){
+//            HomeFragment homeFragment = (HomeFragment) getCurrentFragment();
+//            homeFragment.setVisibilityForViews();
+//        }
 
         toolbar.setTitle(lastSelectedItemName);
 
@@ -384,4 +402,11 @@ public class MainActivity extends AppCompatActivity {
 //        navGraph.setStartDestination(R.id.noListsFragment);
 //        navController.setGraph(navGraph);
 //    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
+    }
 }

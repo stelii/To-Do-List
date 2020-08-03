@@ -203,8 +203,9 @@ public class AddEditFragment extends Fragment {
 //                            .createTask();
             mTaskViewModel.insertTaskToList(task);
         }
+
         NavController navController = Navigation.findNavController(requireActivity(),R.id.nav_host_fragment);
-        navController.navigate(R.id.action_addEditFragment_to_homeFragment);
+        navController.popBackStack(R.id.homeFragment,false);
         hideKeyboard(getView());
 
     }
@@ -252,6 +253,7 @@ public class AddEditFragment extends Fragment {
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         menu.findItem(R.id.toolbar_menu_delete_all).setVisible(false);
         menu.findItem(R.id.toolbar_menu_search_button).setVisible(false);
+        menu.findItem(R.id.toolbar_menu_delete_all_lists).setVisible(false);
         menu.findItem(R.id.toolbar_menu_save_button).setVisible(true);
         menu.findItem(R.id.toolbar_menu_delete_item).setVisible(true);
     }

@@ -2,6 +2,7 @@ package my.projects.todolist.fragments;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -48,6 +49,7 @@ import java.util.List;
 
 import my.projects.todolist.R;
 import my.projects.todolist.adapters.TaskAdapter;
+import my.projects.todolist.database.CustomLiveData;
 import my.projects.todolist.database.Task;
 import my.projects.todolist.database.TaskViewModel;
 import my.projects.todolist.database.TasksList;
@@ -55,11 +57,16 @@ import my.projects.todolist.database.converters.PriorityConverter;
 import my.projects.todolist.models.Priority;
 
 import static android.content.ContentValues.TAG;
+import static android.content.Context.MODE_PRIVATE;
 
 public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxListener, TaskAdapter.OnItemClickListener {
     private TaskViewModel mTaskViewModel ;
     private TaskAdapter mTaskAdapter ;
     private RecyclerView mTaskList ;
+    public static final String FILE_NAME_FOR_LAST_SELECTED_LIST = "last_selected_list";
+
+    public static final String DOES_LISTS_EXIST_FLAG = "does_lists_exist_flag";
+    private boolean doesListsExistFlag ;
 
     private FloatingActionButton mAddNewTaskFabBtn ;
 
@@ -87,6 +94,8 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
+
+
         setHasOptionsMenu(true);
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
@@ -97,6 +106,9 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
         Log.d(TAG, "onViewCreated: " + "the fragment was created");
         mAddNewTaskFabBtn = view.findViewById(R.id.home_fragment_fab_button_add);
         mQuickTaskName = view.findViewById(R.id.home_fragment_task_name_quick_input);
+
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(FILE_NAME_FOR_LAST_SELECTED_LIST,MODE_PRIVATE);
+
         mQuickTaskName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -152,34 +164,47 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
 
         mTaskViewModel.setFilter("");
 
-//        mTaskViewModel.getTasks().observe(getViewLifecycleOwner(), new Observer<List<Task>>() {
-//            @Override
-//            public void onChanged(List<Task> tasks) {
-//                mTaskAdapter.submitList(tasks);
-//            }
-//        });
-
-
-//        mTaskViewModel.getTasksFromList().observe(getViewLifecycleOwner(), new Observer<List<Task>>() {
-//            @Override
-//            public void onChanged(List<Task> tasks) {
-//                Log.d(TAG, "onChanged from viewmodel");
-//                mTaskAdapter.submitList(tasks);
-//            }
-//        });
-
-
-        mTaskViewModel.getCurrentList().observe(getViewLifecycleOwner(), new Observer<TasksList>() {
+        mTaskViewModel.getTasksFromList().observe(getViewLifecycleOwner(), new Observer<List<Task>>() {
             @Override
-            public void onChanged(TasksList tasksList) {
-                mTaskViewModel.getTasksFromList().observe(getViewLifecycleOwner(), new Observer<List<Task>>() {
-                    @Override
-                    public void onChanged(List<Task> tasks) {
-                        mTaskAdapter.submitList(tasks);
-                    }
-                });
+            public void onChanged(List<Task> tasks) {
+                Log.d(TAG, "onChanged from viewmodel");
+                mTaskAdapter.submitList(tasks);
             }
         });
+
+
+//        mTaskViewModel.getCurrentList().observe(getViewLifecycleOwner(), new Observer<TasksList>() {
+//            @Override
+//            public void onChanged(TasksList tasksList) {
+//                if(tasksList == null){
+//            mAddNewTaskFabBtn.setVisibility(View.INVISIBLE);
+//            mQuickTaskName.setVisibility(View.INVISIBLE);
+//                }else{
+//                    mAddNewTaskFabBtn.setVisibility(View.VISIBLE);
+//                    mQuickTaskName.setVisibility(View.VISIBLE);
+//                }
+//            }
+//        });
+//        if(mTaskViewModel.getCurrentList().getValue() == null) {
+//            mAddNewTaskFabBtn.setVisibility(View.INVISIBLE);
+//            mQuickTaskName.setVisibility(View.INVISIBLE);
+//        }
+
+
+//        mTaskViewModel.getCurrentList().observe(getViewLifecycleOwner(), new Observer<TasksList>() {
+//            @Override
+//            public void onChanged(TasksList tasksList) {
+//                mTaskViewModel.getTasksFromList().observe(getViewLifecycleOwner(), new Observer<List<Task>>() {
+//                    @Override
+//                    public void onChanged(List<Task> tasks) {
+//                        Log.d(TAG, "onChanged: ");
+//                        mTaskAdapter.submitList(tasks);
+//                    }
+//                });
+//            }
+//        });
+
+
 
 //        mTaskViewModel.getListName().observe(getViewLifecycleOwner(), new Observer<String>() {
 //            @Override
@@ -240,7 +265,7 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
                 final List<Task> temporaryTaks = new ArrayList<>(mTaskAdapter.getTasks());
 
                 //creez un snackbar care primeste ca parametru recyclerview, mesajul si durata acestuia
-                Snackbar snackbar = Snackbar.make(mTaskList,"ITEM REMOVED",Snackbar.LENGTH_LONG)
+                Snackbar snackbar = Snackbar.make(mTaskList,"ITEM REMOVED",Snackbar.LENGTH_SHORT)
                         .setAction("UNDO", new View.OnClickListener() {
                             //setez o actiune in momentul in care se apasa "UNDO"
                             @Override
@@ -371,6 +396,11 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnCheckboxList
 //        }
 //        return super.onOptionsItemSelected(item);
 //    }
+
+    public void hideViews(){
+        mQuickTaskName.setVisibility(View.INVISIBLE);
+        mAddNewTaskFabBtn.setVisibility(View.INVISIBLE);
+    }
 
     @Override
     public void onItemShortClick(Task task) {

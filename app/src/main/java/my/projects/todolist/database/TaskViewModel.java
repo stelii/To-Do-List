@@ -2,6 +2,7 @@ package my.projects.todolist.database;
 
 import android.app.Application;
 import android.util.Log;
+import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.arch.core.util.Function;
@@ -25,6 +26,17 @@ public class TaskViewModel extends AndroidViewModel {
 
     private MutableLiveData<TasksList> currentList = new MutableLiveData<>();
 
+
+    private CustomLiveData trigger = new CustomLiveData(currentList,mFilterText);
+
+    public CustomLiveData getTrigger() {
+        return trigger;
+    }
+
+    public void setTrigger(CustomLiveData trigger) {
+        this.trigger = trigger;
+    }
+
     public void setCurrentList(TasksList list){
         currentList.setValue(list);
     }
@@ -47,22 +59,34 @@ public class TaskViewModel extends AndroidViewModel {
         super(application);
         mRepository = new TaskRepository(application);
 
-        tasksFromList = Transformations.switchMap(currentList, new Function<TasksList, LiveData<List<Task>>>() {
+
+        tasksFromList = Transformations.switchMap(trigger, new Function<Pair<TasksList, String>, LiveData<List<Task>>>() {
             @Override
-            public LiveData<List<Task>> apply(TasksList input) {
-                return mRepository.getTasksFromList(input.getId());
+            public LiveData<List<Task>> apply(Pair<TasksList, String> input) {
+                if(input.second.isEmpty()){
+                    if(input.first == null) return null ;
+                    else return mRepository.getTasksFromList(input.first.getId());
+                }
+
+                return mRepository.filter(input.first.getId(),input.second);
             }
         });
-
-            tasksFromList = Transformations.switchMap(mFilterText, new Function<String, LiveData<List<Task>>>() {
-                @Override
-                public LiveData<List<Task>> apply(String input) {
-                    if(input == null || input.isEmpty()){
-                            return mRepository.getTasksFromList(currentList.getValue().getId());
-                    }
-                    return mRepository.filter(currentList.getValue().getId(),input);
-                }
-            });
+////        tasksFromList = Transformations.switchMap(currentList, new Function<TasksList, LiveData<List<Task>>>() {
+////            @Override
+////            public LiveData<List<Task>> apply(TasksList input) {
+////                return mRepository.getTasksFromList(currentList.getValue().getId());
+////            }
+////        });
+//
+//            tasksFromList = Transformations.switchMap(mFilterText, new Function<String, LiveData<List<Task>>>() {
+//                @Override
+//                public LiveData<List<Task>> apply(String input) {
+//                    if(input == null || input.isEmpty()){
+//                            return mRepository.getTasksFromList(currentList.getValue().getId());
+//                    }
+//                    return mRepository.filter(currentList.getValue().getId(),input);
+//                }
+//            });
 
 
 
@@ -134,6 +158,10 @@ public class TaskViewModel extends AndroidViewModel {
 
     public void deleteTasksFromList(){
         mRepository.deleteTasksFromList(currentList.getValue().getId());
+    }
+
+    public void deleteAllLists(){
+        mRepository.deleteAllLists();
     }
 
 }

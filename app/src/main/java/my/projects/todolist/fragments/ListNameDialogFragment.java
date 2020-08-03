@@ -85,7 +85,6 @@ public class ListNameDialogFragment extends DialogFragment {
 
                     }
                 });
-
         return alertAdialog.create();
 
     }

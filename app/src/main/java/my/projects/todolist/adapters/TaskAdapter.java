@@ -48,7 +48,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         @Override
         public boolean areContentsTheSame(@NonNull Task oldItem, @NonNull Task newItem) {
-            return oldItem.getName().equals(newItem.getName());
+            //daca niciunul dintre elemente nu are descriere
+            //fac comparatie intre ele folosind numele
+                if(oldItem.getDescription() == null && newItem.getDescription() == null)
+                    return oldItem.getName().equals(newItem.getName()) ;
+                //daca unul dintre elemente nu are descriere atunci nu mai are rost sa le compar si returnez fals
+                if (oldItem.getDescription() == null || newItem.getDescription() == null) return false ;
+
+                //iar daca ambele au descriere atunci le compar in mod complet
+                return oldItem.getName().equals(newItem.getName()) && oldItem.getDescription().equals(newItem.getDescription());
         }
     };
 
@@ -66,6 +74,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         Task task = mDiffer.getCurrentList().get(position);
         holder.displayItem(task);
+        Log.d(TAG, "onBindViewHolder: ");
 
         //TODO : Add functionality to sort the list depending on priority ?? idk
     }
@@ -174,12 +183,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             }
             mPriorityArrow.setColorFilter(task.getPriority().getColor());
 
-
-            Date date = task.getDate();
             if(task.isDone()) {
                 mDueDate.setVisibility(View.VISIBLE);
                 mTaskDescription.setVisibility(View.INVISIBLE);
             }else{
+                Log.d(TAG, "displayItem: " + "in ramura de else");
                 mTaskDescription.setText(task.getDescription());
             }
 
